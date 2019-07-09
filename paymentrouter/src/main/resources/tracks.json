@@ -1,0 +1,28 @@
+[
+  {
+    "name":"OutboundPayment",
+    "stations": {
+      "New": {
+        "name": "New",
+        "onSuccess": "DebitEnrichment",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "DebitEnrichment": {
+        "name": "DebitEnrichment",
+        "onSuccess": "FraudCheckService",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "FraudCheckService": {
+        "name": "FraudCheckService",
+        "onSuccess": "Complete",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "Complete": {
+        "name":"Complete"
+      }
+    }
+  }
+]
