@@ -1,0 +1,21 @@
+server:
+  port: 8081
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer:
+              group-id: paymentgateway
+              auto-offset-reset: earliest
+              enable-auto-commit: false
+    listener:
+      ack-mode: MANUAL
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    com.mejesticpay: DEBUG
