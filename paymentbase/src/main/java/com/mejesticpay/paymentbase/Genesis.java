@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,10 @@ public class Genesis
     /**
      * Payment can be comes with set of instruction like same day payment(SDVA), Real time etc and during payment processing, system need to honor those code.
      */
+    /**
+     * Inter bank settlement date.
+     */
+    private LocalDate settlementDate;
 
     private final static String PROCESSING_INSTRUCTION_SERVICE_LEVEL = "PI_SERVICE_LEVEL";
 
@@ -58,10 +63,12 @@ public class Genesis
     private List<Party>instructingParties;
     private Party debtor;
     private Party debtorAgent;
+    private String debtorAccount;
 
     private Party ultimateCreditor;
     private Party creditor;
     private Party creditorAgent;
+    private String creditorAccount;
     /* List of Parties involved to reach the Creditor Agent.
     /*Agent that is instructed by the previous party in the chain to carry out the (set of) instruction(s)
    Receiver Party
