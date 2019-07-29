@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+     url: jdbc:mysql://localhost:3306/payments
+     username: paymenttest
+     password: secret
+
+server:
+  port: 8095

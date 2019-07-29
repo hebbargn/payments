@@ -1,0 +1,21 @@
+create database payments;
+create user 'paymenttest' identified by 'secret';
+grant all on payments.* to paymenttest;
+
+create table transactions ( payment_ref varchar(255) not null
+,branch varchar(255) not null
+,source varchar(255) not null
+,station varchar(255) not null
+,state varchar(255) not null
+,status varchar(255) not null
+,track varchar(255) not null
+,version integer not null
+,json_genesis varchar(2000)
+,json_debit_enrich varchar(2000)
+,json_credit_enrich varchar(2000)
+,json_fraud_check varchar(2000)
+ ,PRIMARY KEY (payment_ref)
+ );
+
+create table audit_entries(paymentid varchar(255) not null,
+servicename varchar(255), instant timestamp, jsondata varchar(1024));

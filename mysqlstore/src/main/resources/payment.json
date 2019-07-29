@@ -1,0 +1,116 @@
+{
+  "state": "Active",
+  "status": "Ready",
+  "station": "New",
+  "track": "OutboundPayment",
+  "createdTime": null,
+  "lastUpdatedTime": null,
+  "createdBy": null,
+  "lastUpdatedBy": null,
+  "version": 1,
+  "genesis": {
+    "instructionId": "INSTID-293",
+    "endToendId": "ENDENDID-142",
+    "transactionId": null,
+    "processingInstructions": null,
+    "settlementAmount": 597,
+    "settlementCurrency": "USD",
+    "ultimateDebtor": null,
+    "instructingParties": null,
+    "debtor": {
+      "name": "Bank Of America",
+      "street": null,
+      "buildingNumber": null,
+      "postalCode": null,
+      "townName": null,
+      "country": null,
+      "identification": null,
+      "accounts": {
+        "USABA": "132123",
+        "US": "12321321"
+      },
+      "financialInstitutionIds": null
+    },
+    "debtorAgent": {
+      "name": null,
+      "street": null,
+      "buildingNumber": null,
+      "postalCode": null,
+      "townName": null,
+      "country": null,
+      "identification": null,
+      "accounts": null,
+      "financialInstitutionIds": null
+    },
+    "ultimateCreditor": null,
+    "creditor": {
+      "name": "Sean Pallock",
+      "street": null,
+      "buildingNumber": null,
+      "postalCode": null,
+      "townName": null,
+      "country": null,
+      "identification": null,
+      "accounts": {
+        "US": "21332132"
+      },
+      "financialInstitutionIds": null
+    },
+    "creditorAgent": {
+      "name": "Bank Of New York",
+      "street": null,
+      "buildingNumber": null,
+      "postalCode": null,
+      "townName": null,
+      "country": null,
+      "identification": null,
+      "accounts": {
+        "USABA": "23232"
+      },
+      "financialInstitutionIds": null
+    },
+    "intermediaries": null,
+    "chargeBearer": null,
+    "auditEntries": null,
+    "clearingSystemReference": null,
+    "remittance": null
+  },
+  "source": "ISO",
+  "subSource": null,
+  "branch": "US",
+  "creditEnrichment": null,
+  "debitEnrichment": null,
+  "routeData": null,
+
+  "auditEntries": [
+    {
+      "serviceName": "com.mejesticpay.debitenrichment.PaymentDebitEnricher",
+      "message": "Successfully enriched Debit party",
+      "instant": "2019-07-05T21:03:23.819Z",
+      "jsonData": null
+    },
+    {
+      "serviceName": "com.mejesticpay.paymentrouter.SimpleRouter",
+      "message": "DebitEnrichment Service Data",
+      "instant": "2019-07-05T21:03:23.922Z",
+      "jsonData": "{\"@type\":\"DebitEnrichment\",\"debitParty\":{\"name\":\"Bank Of America\",\"accounts\":{\"USABA\":\"132123\",\"US\":\"12321321\"}}}"
+    },
+    {
+      "serviceName": "com.mejesticpay.fraudcheck.FraudCheckService",
+      "message": "Successfully completed the FraudCheck",
+      "instant": "2019-07-05T21:03:24.653Z",
+      "jsonData": null
+    },
+    {
+      "serviceName": "com.mejesticpay.paymentrouter.SimpleRouter",
+      "message": "FraudCheckService Service Data",
+      "instant": "2019-07-05T21:03:24.939Z",
+      "jsonData": "{\"@type\":\"FraudCheckInfo\",\"fraudCheckStatus\":\"Approved\",\"fraudCheckDate\":[2019,7,5]}"
+    }
+  ],
+  "fundServiceInfo": null,
+  "sanctionsCheckInfo": null,
+  "accountingInfo": null,
+  "fraudCheckInfo": null,
+  "paymentIdentifier": "5bb97e72-c11f-42be-93fb-3"
+}
