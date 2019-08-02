@@ -32,7 +32,23 @@ public class Party
     private Identification identification;
 
     /*Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction. */
-    private Map<String,String> accounts;
+    //private Map<String,String> accounts;
+    /**
+     * Account number associated with party.
+     */
+    private String accountNumber;
+    /**
+     * Currency associated with account.
+     */
+    private String accountCurrency;
+    /**
+     * Type of account. Savings, Checking, Internal, Nostro, Loan etc.
+     */
+    private String accountType;
+    /**
+     * IBAN ,BBAN , etc.
+     */
+    private String accountStructure;
 
     /*Unique and unambiguous identification of a financial institution, asassigned under an internationally recognized or proprietary identification scheme.
     example are sort codes, BIC etc.
@@ -54,15 +70,6 @@ public class Party
             this.cityOfBirth = cityOfBirth;
             this.countryOfBirth = countryOfBirth;
         }
-    }
-
-    public void addAccount(String type, String number)
-    {
-        if(accounts == null)
-        {
-            accounts = new HashMap<String,String>();
-        }
-        accounts.put(type,number);
     }
 
     public void addFinancialInstitutionId(String type, String identifier)

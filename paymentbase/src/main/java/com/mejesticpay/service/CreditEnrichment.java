@@ -4,16 +4,30 @@ import com.mejesticpay.paymentbase.Party;
 import com.mejesticpay.paymentbase.ServiceData;
 
 import java.time.LocalDate;
-import java.util.List;
 
+/**
+ * CREDIT SIDE ENRICHMENT return by credit enrichment service.
+ */
 public class CreditEnrichment  implements ServiceData
 {
     /*
-    * CREDIT SIDE ENRICHMENT
+    * This is actual party with credit account.
+    * For outgoing clearing payment, it will be clearing account.
+    * For book payment, it will be customer account.
     * */
     private Party creditParty;
-
-    private List<Party>creditPayChain;
+    /**
+     * credit customer
+     */
+    private Party creditor;
+    /**
+     * Customer's bank. Customer has account with this bank.
+     */
+    private Party creditorAgent;
+    /**
+     * Indirect participant that has account with this bank.
+     */
+    private Party indirectParticipant;
 
     private String routeType;
     private LocalDate settlementDate;

@@ -58,9 +58,18 @@ public class Genesis
 
     //Ultimate party represent where really money come from and go. But there is no real account and only for regulatory reason will be used.
     private Party ultimateDebtor;
+    /**
+     * Agent (bank) that instructs the next party
+     */
+    private Party instructingAgent;
+    /**
+     * Agent (bank) that is instructed by the previous (instructing agent) party
+     */
+    private Party instructedAgent;
+
     /* Agent that instructs the next party in the chain to carry out the (set of) instruction(s).
      * Sender Party*/
-    private List<Party>instructingParties;
+    //private List<Party>instructingParties;
     private Party debtor;
     private Party debtorAgent;
     private String debtorAccount;

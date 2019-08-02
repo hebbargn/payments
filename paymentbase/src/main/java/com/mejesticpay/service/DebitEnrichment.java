@@ -7,14 +7,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Setter @Getter @NoArgsConstructor @ToString
 public class DebitEnrichment  implements ServiceData
 {
     /* DEBIT SIDE Enrichment */
     private Party debitParty;
 
-    private List<Party> debitPayChain;
+    /**
+     * Debit customer
+     */
+    private Party debtor;
+    /**
+     * Customer's bank. Customer has account with this bank.
+     */
+    private Party debtorAgent;
+    /**
+     * Indirect participant that has account with this bank.
+     */
+    private Party indirectParticipant;
 
 }
