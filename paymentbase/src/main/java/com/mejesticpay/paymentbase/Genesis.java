@@ -61,28 +61,28 @@ public class Genesis
     /**
      * Agent (bank) that instructs the next party
      */
-    private Party instructingAgent;
+    private BranchAndFinancialInstitution instructingAgent;
     /**
      * Agent (bank) that is instructed by the previous (instructing agent) party
      */
-    private Party instructedAgent;
+    private BranchAndFinancialInstitution instructedAgent;
 
     /* Agent that instructs the next party in the chain to carry out the (set of) instruction(s).
      * Sender Party*/
     //private List<Party>instructingParties;
     private Party debtor;
-    private Party debtorAgent;
+    private BranchAndFinancialInstitution debtorAgent;
     private String debtorAccount;
 
     private Party ultimateCreditor;
     private Party creditor;
-    private Party creditorAgent;
+    private BranchAndFinancialInstitution creditorAgent;
     private String creditorAccount;
     /* List of Parties involved to reach the Creditor Agent.
     /*Agent that is instructed by the previous party in the chain to carry out the (set of) instruction(s)
    Receiver Party
      */
-    private List<Party>intermediaries;
+    private List<BranchAndFinancialInstitution>intermediaries;
 
 
     /*

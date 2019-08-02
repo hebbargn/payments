@@ -25,17 +25,17 @@ public class PaymentTest
         Party debtorAgent = new Party();
         debtor.setName("Bank Of America");
 //        debtor.addAccount("USABA", "132123");
-        origination.setDebtorAgent(debtorAgent);
+//        origination.setDebtorAgent(debtorAgent);
 
         Party creditor = new Party();
         creditor.setName("Sean Pallock");
 //        creditor.addAccount("US", "21332132");
-        origination.setCreditor(creditor);
+//        origination.setCreditor(creditor);
 
         Party creditorAgent = new Party();
         creditorAgent.setName("Bank Of New York");
 //        creditorAgent.addAccount("USABA", "23232");
-        origination.setCreditorAgent(creditorAgent);
+//        origination.setCreditorAgent(creditorAgent);
 
         origination.setSettlementAmount(new BigDecimal(random.nextInt(1000)));
         origination.setSettlementCurrency("USD");

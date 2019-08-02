@@ -49,6 +49,10 @@ public class Party
      * IBAN ,BBAN , etc.
      */
     private String accountStructure;
+    /**
+     * Account Name associated with party.
+     */
+    private String accountName;
 
     /*Unique and unambiguous identification of a financial institution, asassigned under an internationally recognized or proprietary identification scheme.
     example are sort codes, BIC etc.
