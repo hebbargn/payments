@@ -1,12 +1,10 @@
 package com.mejesticpay.iso20022.pacs008;
 
 import com.mejesticpay.iso20022.base.XMLParser;
-import com.mejesticpay.iso20022.type.PartyIdentification135;
-import com.mejesticpay.iso20022.type.PaymentTypeInformation28;
+import com.mejesticpay.iso20022.type.*;
 import com.mejesticpay.paymentbase.Genesis;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.util.StringUtils;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -69,8 +67,14 @@ public class CreditTransferMessageParser extends XMLParser
             if(eventType == XMLStreamReader.START_ELEMENT)
             {
 
-                if(xmlStreamReader.getLocalName().equalsIgnoreCase("PmtId"))
+                if(xmlStreamReader.getLocalName().equalsIgnoreCase("GrpHdr"))
                 {
+                    logger.error("Starting GrpHdr");
+                    GroupHeader93.setGroupHeader(xmlStreamReader, genesis);
+                    continue;
+                }
+
+                if(xmlStreamReader.getLocalName().equalsIgnoreCase("PmtId")) {
                     logger.debug("Starting PmtId");
                     PaymentTypeInformation28.setPmtId(xmlStreamReader, genesis);
                     continue;
@@ -90,13 +94,13 @@ public class CreditTransferMessageParser extends XMLParser
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("InstgAgt"))
                 {
-                    // TODO: Handle
-                    logger.debug("Starting InstgAgt");
+                    logger.error("Starting Instructing Agt");
+                    genesis.setInstructingAgent(BranchAndFinancialInstitutionIdentification6.getParty(xmlStreamReader, "InstgAgt"));
                 }
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("InstdAgt"))
                 {
-                    // TODO: Handle
-                    logger.debug("Starting InstdAgt");
+                    logger.error("Starting InstdAgt");
+                    genesis.setInstructedAgent(BranchAndFinancialInstitutionIdentification6.getParty(xmlStreamReader, "InstdAgt"));
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("Dbtr"))
@@ -109,8 +113,19 @@ public class CreditTransferMessageParser extends XMLParser
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("DbtrAcct"))
                 {
                     logger.debug("Starting Debtor Account");
-                    genesis.setDebtorAccount(getAccount(xmlStreamReader,"DbtrAcct"));
+                    genesis.setDebtorAccount(CashAccount38.getAccount(xmlStreamReader,"DbtrAcct"));
                     continue;
+                }
+
+                if(xmlStreamReader.getLocalName().equalsIgnoreCase("DbtrAgt"))
+                {
+                    logger.error("Starting DbtrAgt");
+                    genesis.setDebtorAgent(BranchAndFinancialInstitutionIdentification6.getParty(xmlStreamReader, "DbtrAgt"));
+                }
+                if(xmlStreamReader.getLocalName().equalsIgnoreCase("CdtrAgt"))
+                {
+                    logger.error("Starting CdtrAgt");
+                    genesis.setCreditorAgent(BranchAndFinancialInstitutionIdentification6.getParty(xmlStreamReader, "CdtrAgt"));
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("Cdtr"))
@@ -123,49 +138,19 @@ public class CreditTransferMessageParser extends XMLParser
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("CdtrAcct"))
                 {
                     logger.debug("Starting Creditor Account");
-                    genesis.setCreditorAccount(getAccount(xmlStreamReader,"CdtrAcct"));
+                    genesis.setCreditorAccount(CashAccount38.getAccount(xmlStreamReader,"CdtrAcct"));
                     continue;
                 }
-            }
 
-            //If employee tag is closed then add the employee object to list
-            if(eventType == XMLStreamReader.END_ELEMENT)
-            {
-            }
+            }  // End of START_ELEMENT
+
+
+            if(eventType == XMLStreamReader.END_ELEMENT) {// TODO }
         }
 
-        logger.debug(genesis);
 
-    }
-
-    private String getAccount(XMLStreamReader xmlStreamReader, String partyIdentifier) throws XMLStreamException
-    {
-        String accountNumber = null;
-        while (xmlStreamReader.hasNext())
-        {
-            xmlStreamReader.next();
-//            printEvent(xmlStreamReader);
-            if (xmlStreamReader.getEventType() == XMLStreamReader.CHARACTERS)
-            {
-                String text = xmlStreamReader.getText();
-                if(!StringUtils.isEmpty(StringUtils.trimAllWhitespace(text)))
-                {
-                    accountNumber = text;
-                    logger.debug(accountNumber);
-                }
-            }
-
-            if (xmlStreamReader.getEventType() == XMLStreamReader.END_ELEMENT)
-            {
-                if(xmlStreamReader.getLocalName().equalsIgnoreCase(partyIdentifier)) {
-                    break;
-                }
-            }
         }
-
-        return  accountNumber;
+        logger.error(genesis);
     }
-
-
 
 }

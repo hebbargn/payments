@@ -1,5 +1,6 @@
 package com.mejesticpay.iso20022.type;
 
+import com.mejesticpay.iso20022.base.XMLParser;
 import com.mejesticpay.paymentbase.Party;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-public class PartyIdentification135
+public class PartyIdentification135 extends XMLParser
 {
     private static final Logger logger = LogManager.getLogger(PartyIdentification135.class);
 
@@ -25,37 +26,37 @@ public class PartyIdentification135
             {
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("Nm")) {
                     String name = xmlStreamReader.getElementText();
-                    System.out.println(name);
+                    logger.debug(name);
                     party.setName(name);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("StrtNm")) {
                     String StrtNm = xmlStreamReader.getElementText();
-                    System.out.println(StrtNm);
+                    logger.debug(StrtNm);
                     party.setStreet(StrtNm);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("BldgNb")) {
                     String BldgNb = xmlStreamReader.getElementText();
-                    System.out.println(BldgNb);
+                    logger.debug(BldgNb);
                     party.setBuildingNumber(BldgNb);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("PstCd")) {
                     String PstCd = xmlStreamReader.getElementText();
-                    System.out.println(PstCd);
+                    logger.debug(PstCd);
                     party.setPostalCode(PstCd);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("TwnNm")) {
                     String TwnNm = xmlStreamReader.getElementText();
-                    System.out.println(TwnNm);
+                    logger.debug(TwnNm);
                     party.setTownName(TwnNm);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("Ctry")) {
                     String Ctry = xmlStreamReader.getElementText();
-                    System.out.println(Ctry);
+                    logger.debug(Ctry);
                     party.setCountry(Ctry);
                 }
             }
@@ -63,7 +64,7 @@ public class PartyIdentification135
             if (xmlStreamReader.getEventType() == XMLStreamReader.END_ELEMENT)
             {
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase(partyIdentifier)) {
-                    System.out.println("Breaking out of loop...");
+                    logger.debug("Breaking out of loop...");
                     return party;
                 }
             }

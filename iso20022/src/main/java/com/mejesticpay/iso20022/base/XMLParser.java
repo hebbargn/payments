@@ -11,7 +11,7 @@ public class XMLParser
 
     private static final Logger logger = LogManager.getLogger(XMLParser.class);
 
-    private static void printEvent(XMLStreamReader xmlr) {
+    protected static void printEvent(XMLStreamReader xmlr) {
         logger.debug("EVENT: Type= " + xmlr.getEventType()+ " ["+xmlr.getLocation().getLineNumber()+"]["+
                 xmlr.getLocation().getColumnNumber()+"] ");
         logger.debug(" [");

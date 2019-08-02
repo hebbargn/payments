@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.time.LocalDate;
 
 public class PaymentTypeInformation28 extends XMLParser
 {
@@ -22,17 +21,10 @@ public class PaymentTypeInformation28 extends XMLParser
         while (xmlStreamReader.hasNext())
         {
             xmlStreamReader.next();
-//            printEvent(xmlStreamReader);
+            //printEvent(xmlStreamReader);
             if(xmlStreamReader.getEventType()  == XMLStreamReader.START_ELEMENT)
             {
-                if (xmlStreamReader.getLocalName().equalsIgnoreCase("IntrBkSttlmDt")) {
-                    // 2019-07-23
-                    String dateAsString = xmlStreamReader.getElementText();
-                    System.out.println(dateAsString);
-                    LocalDate localDate = LocalDate.parse(dateAsString);
-                    //Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    genesis.setSettlementDate(localDate);
-                }
+
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("InstrId")) {
                     String InstrId = xmlStreamReader.getElementText();
