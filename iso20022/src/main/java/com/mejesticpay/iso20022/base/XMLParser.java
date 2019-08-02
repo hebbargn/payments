@@ -1,75 +1,80 @@
 package com.mejesticpay.iso20022.base;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 public class XMLParser
 {
 
+    private static final Logger logger = LogManager.getLogger(XMLParser.class);
+
     private static void printEvent(XMLStreamReader xmlr) {
-        System.out.print("EVENT: Type= " + xmlr.getEventType()+ " ["+xmlr.getLocation().getLineNumber()+"]["+
+        logger.debug("EVENT: Type= " + xmlr.getEventType()+ " ["+xmlr.getLocation().getLineNumber()+"]["+
                 xmlr.getLocation().getColumnNumber()+"] ");
-        System.out.print(" [");
+        logger.debug(" [");
         switch (xmlr.getEventType()) {
             case XMLStreamConstants.START_ELEMENT:
-                System.out.print("<");
+                logger.debug("<");
                 printName(xmlr);
                 printNamespaces(xmlr);
                 printAttributes(xmlr);
-                System.out.print(">");
+                logger.debug(">");
                 printElementText(xmlr);
                 break;
             case XMLStreamConstants.END_ELEMENT:
-                System.out.print("</");
+                logger.debug("</");
                 printName(xmlr);
-                System.out.print(">");
+                logger.debug(">");
                 break;
             case XMLStreamConstants.SPACE:
             case XMLStreamConstants.CHARACTERS:
                 int start = xmlr.getTextStart();
                 int length = xmlr.getTextLength();
-                System.out.print(new String(xmlr.getTextCharacters(),
+                logger.debug(new String(xmlr.getTextCharacters(),
                         start,
                         length));
                 break;
             case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                System.out.print("<?");
+                logger.debug("<?");
                 if (xmlr.hasText())
-                    System.out.print(xmlr.getText());
-                System.out.print("?>");
+                    logger.debug(xmlr.getText());
+                logger.debug("?>");
                 break;
             case XMLStreamConstants.CDATA:
-                System.out.print("<![CDATA[");
+                logger.debug("<![CDATA[");
                 start = xmlr.getTextStart();
                 length = xmlr.getTextLength();
-                System.out.print(new String(xmlr.getTextCharacters(),
+                logger.debug(new String(xmlr.getTextCharacters(),
                         start,
                         length));
-                System.out.print("]]>");
+                logger.debug("]]>");
                 break;
             case XMLStreamConstants.COMMENT:
-                System.out.print("<!--");
+                logger.debug("<!--");
                 if (xmlr.hasText())
-                    System.out.print(xmlr.getText());
-                System.out.print("-->");
+                    logger.debug(xmlr.getText());
+                logger.debug("-->");
                 break;
             case XMLStreamConstants.ENTITY_REFERENCE:
-                System.out.print(xmlr.getLocalName()+"=");
+                logger.debug(xmlr.getLocalName()+"=");
                 if (xmlr.hasText())
-                    System.out.print("["+xmlr.getText()+"]");
+                    logger.debug("["+xmlr.getText()+"]");
                 break;
             case XMLStreamConstants.START_DOCUMENT:
-                System.out.print("<?xml");
-                System.out.print(" version='"+xmlr.getVersion()+"'");
-                System.out.print(" encoding='"+xmlr.getCharacterEncodingScheme()+"'");
+                logger.debug("<?xml");
+                logger.debug(" version='"+xmlr.getVersion()+"'");
+                logger.debug(" encoding='"+xmlr.getCharacterEncodingScheme()+"'");
                 if (xmlr.isStandalone())
-                    System.out.print(" standalone='yes'");
+                    logger.debug(" standalone='yes'");
                 else
-                    System.out.print(" standalone='no'");
-                System.out.print("?>");
+                    logger.debug(" standalone='no'");
+                logger.debug("?>");
                 break;
         }
-        System.out.println("]");
+        logger.debug("]");
     }
     private static void printName(XMLStreamReader xmlr){
         if(xmlr.hasName()){
@@ -82,9 +87,9 @@ public class XMLParser
     private static void printName(String prefix,
                                   String uri,
                                   String localName) {
-        if (uri != null && !("".equals(uri)) ) System.out.print("['"+uri+"']:");
-        if (prefix != null) System.out.print(prefix+":");
-        if (localName != null) System.out.print(localName);
+        if (uri != null && !("".equals(uri)) ) logger.debug("['"+uri+"']:");
+        if (prefix != null) logger.debug(prefix+":");
+        if (localName != null) logger.debug(localName);
     }
     private static void printAttributes(XMLStreamReader xmlr){
         for (int i=0; i < xmlr.getAttributeCount(); i++) {
@@ -96,9 +101,9 @@ public class XMLParser
         String namespace = xmlr.getAttributeNamespace(index);
         String localName = xmlr.getAttributeLocalName(index);
         String value = xmlr.getAttributeValue(index);
-        System.out.print(" ");
+        logger.debug(" ");
         printName(prefix,namespace,localName);
-        System.out.print("='"+value+"'");
+        logger.debug("='"+value+"'");
     }
     private static void printNamespaces(XMLStreamReader xmlr){
         for (int i=0; i < xmlr.getNamespaceCount(); i++) {
@@ -108,22 +113,22 @@ public class XMLParser
     private static void printNamespace(XMLStreamReader xmlr, int index) {
         String prefix = xmlr.getNamespacePrefix(index);
         String uri = xmlr.getNamespaceURI(index);
-        System.out.print(" ");
+        logger.debug(" ");
         if (prefix == null)
-            System.out.print("xmlns='"+uri+"'");
+            logger.debug("xmlns='"+uri+"'");
         else
-            System.out.print("xmlns:"+prefix+"='"+uri+"'");
+            logger.debug("xmlns:"+prefix+"='"+uri+"'");
     }
 
     private static void printElementText(XMLStreamReader xmlr){
         if(xmlr.hasText()){
-            System.out.print(xmlr.getText());
+            logger.debug(xmlr.getText());
         }
     }
 
     private static void printText(XMLStreamReader xmlr){
         if(xmlr.hasText()){
-            System.out.print(xmlr.getText());
+            logger.debug(xmlr.getText());
         }
     }
 }

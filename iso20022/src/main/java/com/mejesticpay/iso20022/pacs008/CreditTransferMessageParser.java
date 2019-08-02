@@ -4,6 +4,8 @@ import com.mejesticpay.iso20022.base.XMLParser;
 import com.mejesticpay.iso20022.type.PartyIdentification135;
 import com.mejesticpay.iso20022.type.PaymentTypeInformation28;
 import com.mejesticpay.paymentbase.Genesis;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 import javax.xml.stream.XMLInputFactory;
@@ -15,6 +17,8 @@ import java.math.BigDecimal;
 
 public class CreditTransferMessageParser extends XMLParser
 {
+    private static final Logger logger = LogManager.getLogger(CreditTransferMessageParser.class);
+
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
 
     public Genesis createGenesis(InputStream inputStream) throws XMLStreamException
@@ -36,13 +40,13 @@ public class CreditTransferMessageParser extends XMLParser
         try {
             while (xmlStreamReader.hasNext()) {
                 int eventType = xmlStreamReader.next();
-//                System.out.println(eventType);
+//                logger.debug(eventType);
                 if (XMLStreamReader.START_ELEMENT == eventType)
                 {
                     String localname = xmlStreamReader.getLocalName();
                     if (localname.contains("CreditTransfer"))
                     {
-                        System.out.println("got pacs.008");
+                        logger.debug("got pacs.008");
                         parseCreditTransfer(xmlStreamReader, genesis);
                     }
                 }
@@ -67,7 +71,7 @@ public class CreditTransferMessageParser extends XMLParser
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("PmtId"))
                 {
-                    System.out.println("Starting PmtId");
+                    logger.debug("Starting PmtId");
                     PaymentTypeInformation28.setPmtId(xmlStreamReader, genesis);
                     continue;
                 }
@@ -76,49 +80,49 @@ public class CreditTransferMessageParser extends XMLParser
                 {
                     // Read attribute before reading element text.
                     String currency = xmlStreamReader.getAttributeValue(null,"Ccy");
-                    System.out.println(currency);
+                    logger.debug(currency);
                     genesis.setSettlementCurrency(currency);
 
                     String IntrBkSttlmAmt = xmlStreamReader.getElementText();
-                    System.out.println(IntrBkSttlmAmt);
+                    logger.debug(IntrBkSttlmAmt);
                     genesis.setSettlementAmount(new BigDecimal(IntrBkSttlmAmt));
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("InstgAgt"))
                 {
                     // TODO: Handle
-                    System.out.println("Starting InstgAgt");
+                    logger.debug("Starting InstgAgt");
                 }
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("InstdAgt"))
                 {
                     // TODO: Handle
-                    System.out.println("Starting InstdAgt");
+                    logger.debug("Starting InstdAgt");
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("Dbtr"))
                 {
-                    System.out.println("Starting Debtor");
+                    logger.debug("Starting Debtor");
                     genesis.setDebtor(PartyIdentification135.getParty(xmlStreamReader,"Dbtr"));
                     continue;
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("DbtrAcct"))
                 {
-                    System.out.println("Starting Debtor Account");
+                    logger.debug("Starting Debtor Account");
                     genesis.setDebtorAccount(getAccount(xmlStreamReader,"DbtrAcct"));
                     continue;
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("Cdtr"))
                 {
-                    System.out.println("Starting Creditor");
+                    logger.debug("Starting Creditor");
                     genesis.setCreditor(PartyIdentification135.getParty(xmlStreamReader,"Cdtr"));
                     continue;
                 }
 
                 if(xmlStreamReader.getLocalName().equalsIgnoreCase("CdtrAcct"))
                 {
-                    System.out.println("Starting Creditor Account");
+                    logger.debug("Starting Creditor Account");
                     genesis.setCreditorAccount(getAccount(xmlStreamReader,"CdtrAcct"));
                     continue;
                 }
@@ -130,7 +134,7 @@ public class CreditTransferMessageParser extends XMLParser
             }
         }
 
-        System.out.println(genesis);
+        logger.debug(genesis);
 
     }
 
@@ -147,7 +151,7 @@ public class CreditTransferMessageParser extends XMLParser
                 if(!StringUtils.isEmpty(StringUtils.trimAllWhitespace(text)))
                 {
                     accountNumber = text;
-                    System.out.println(accountNumber);
+                    logger.debug(accountNumber);
                 }
             }
 

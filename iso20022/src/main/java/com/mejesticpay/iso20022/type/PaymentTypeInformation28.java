@@ -2,6 +2,8 @@ package com.mejesticpay.iso20022.type;
 
 import com.mejesticpay.iso20022.base.XMLParser;
 import com.mejesticpay.paymentbase.Genesis;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 
 public class PaymentTypeInformation28 extends XMLParser
 {
+    private static final Logger logger = LogManager.getLogger(PaymentTypeInformation28.class);
+
     public static String PAYMENT_ID = "PmtId";
 
     // TODO: Create constants for all elements within this tag.

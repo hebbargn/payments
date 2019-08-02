@@ -1,12 +1,16 @@
 package com.mejesticpay.iso20022.type;
 
 import com.mejesticpay.paymentbase.Party;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 public class PartyIdentification135
 {
+    private static final Logger logger = LogManager.getLogger(PartyIdentification135.class);
+
     public static Party getParty(XMLStreamReader xmlStreamReader, String partyIdentifier) throws XMLStreamException
     {
         Party party = new Party();

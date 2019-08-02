@@ -2,6 +2,8 @@ package com.mejesticpay.iso20022.file.monitor;
 
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 //import org.springframework.boot.SpringApplication;
 //import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,7 +12,10 @@ import java.io.File;
 //@SpringBootApplication
 public class FileMonitorApp
 {
-    public static String inputFolder = "C:/gateway/USRTP/input";
+//    public static String inputFolder = "C:/gateway/USRTP/input";
+    public static String inputFolder = "/Users/kpatel/gateway/USRTP/input";
+
+    private static final Logger logger = LogManager.getLogger(FileMonitorApp.class);
 
     public static void main(String []args)
     {
@@ -30,7 +35,7 @@ public class FileMonitorApp
         try {
             monitor.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable()
@@ -38,9 +43,10 @@ public class FileMonitorApp
             @Override
             public void run() {
                 try {
-                    System.out.println("Stopping monitor.");
+                    logger.debug("Stopping monitor.");
                     monitor.stop();
                 } catch (Exception ignored) {
+                    logger.error(ignored);
                 }
             }
         }));

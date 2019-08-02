@@ -7,6 +7,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -16,54 +18,56 @@ import java.nio.charset.Charset;
 
 public class FileAlterationListenerImpl implements FileAlterationListener
 {
+    private static final Logger logger = LogManager.getLogger(FileMonitorApp.class);
+
     @Override
     public void onStart(FileAlterationObserver fileAlterationObserver)
     {
-        //System.out.println("FileAlterationListener started on: " + fileAlterationObserver.getDirectory().getAbsolutePath());
+        //logger.debug("FileAlterationListener started on: " + fileAlterationObserver.getDirectory().getAbsolutePath());
     }
 
     @Override
     public void onDirectoryCreate(File file)
     {
         String absolutePath = file.getAbsolutePath();
-        System.out.println("onDirectoryCreate: " + absolutePath);
+        logger.debug("onDirectoryCreate: " + absolutePath);
         String fullPath = FilenameUtils.getFullPath(absolutePath);
         String extension = FilenameUtils.getExtension(absolutePath);
         String baseName = FilenameUtils.getBaseName(absolutePath);
-        System.out.println(absolutePath + " , " + fullPath + " , " + extension + " , " + baseName);
+        logger.debug(absolutePath + " , " + fullPath + " , " + extension + " , " + baseName);
     }
 
     @Override
     public void onDirectoryChange(File file)
     {
-        System.out.println("onDirectoryChange: " + file.getAbsoluteFile());
+        logger.debug("onDirectoryChange: " + file.getAbsoluteFile());
     }
 
     @Override
     public void onDirectoryDelete(File file)
     {
-        System.out.println("onDirectoryDelete: " + file.getAbsoluteFile());
+        logger.debug("onDirectoryDelete: " + file.getAbsoluteFile());
     }
 
     @Override
     public void onFileCreate(File file)
     {
         String absolutePath = file.getAbsolutePath();
-        System.out.println("onFileCreate: " + absolutePath);
-        System.out.println("File Access read/write/execute: " + file.canRead() + "/" + file.canWrite() + "/" + file.canExecute());
+        logger.debug("onFileCreate: " + absolutePath);
+        logger.debug("File Access read/write/execute: " + file.canRead() + "/" + file.canWrite() + "/" + file.canExecute());
 
         String fullPath = FilenameUtils.getFullPath(absolutePath);
         String extension = FilenameUtils.getExtension(absolutePath);
         String baseName = FilenameUtils.getBaseName(absolutePath);
-        System.out.println(absolutePath + " , " + fullPath + " , " + extension + " , " + baseName);
+        logger.debug(absolutePath + " , " + fullPath + " , " + extension + " , " + baseName);
 
         String archiveFolderAsString = file.getParentFile().getParentFile().getAbsoluteFile() + File.separator + "archive";
         File archiveFolder = new File(archiveFolderAsString);
-        System.out.println("Archive Folder: " + archiveFolder.getAbsoluteFile());
+        logger.debug("Archive Folder: " + archiveFolder.getAbsoluteFile());
 
         try {
             String data = FileUtils.readFileToString(file, Charset.defaultCharset());
-            System.out.println("File Content:" + data);
+            logger.debug("File Content:" + data);
 
             Genesis genesis = new CreditTransferMessageParser().createGenesis(new FileReader(file));
 
@@ -85,19 +89,19 @@ public class FileAlterationListenerImpl implements FileAlterationListener
     @Override
     public void onFileChange(File file)
     {
-        System.out.println("onFileChange: " + file.getAbsoluteFile());
+        logger.debug("onFileChange: " + file.getAbsoluteFile());
     }
 
     @Override
     public void onFileDelete(File file)
     {
-        System.out.println("onFileDelete: " + file.getAbsoluteFile());
+        logger.debug("onFileDelete: " + file.getAbsoluteFile());
     }
 
     @Override
     public void onStop(FileAlterationObserver fileAlterationObserver)
     {
-        //System.out.println("FileAlterationListener stopped on: " + fileAlterationObserver.getDirectory().getAbsolutePath());
+        //logger.debug("FileAlterationListener stopped on: " + fileAlterationObserver.getDirectory().getAbsolutePath());
     }
 }
 
