@@ -28,7 +28,7 @@ public class CIFStartup implements CommandLineRunner
     @Transactional
     public void run(String... strings)
     {
-        Account a1 = new Account();
+      /*  Account a1 = new Account();
         a1.setAccountNumber("001");
         a1.setState("Active");
         a1.setStatus("Open");
@@ -45,6 +45,6 @@ public class CIFStartup implements CommandLineRunner
 
         List<Customer> customers = customerRepository.findAll();
         for(Customer c: customers)
-            System.out.println(c);
+            System.out.println(c);*/
     }
 }

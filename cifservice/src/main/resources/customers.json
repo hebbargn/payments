@@ -1,0 +1,44 @@
+[
+  {
+    "customerNumber": "1001",
+    "status": "Active",
+    "address": " 101 New Street, New Town, NA, USA",
+    "name": " Customer 1",
+    "accounts": [
+      {
+        "accountNumber": "2001",
+        "type": "Savings",
+        "status": "Open",
+        "description": " Account description"
+      }
+    ]
+  },
+  {
+    "customerNumber": "1002",
+    "status": "Active",
+    "address": " 201 New Street, New Town, NA, USA",
+    "name": " Customer 2",
+    "accounts": [
+      {
+        "accountNumber": "2002",
+        "type": "Savings",
+        "status": "Open",
+        "description": " Account description"
+      }
+    ]
+  },
+  {
+    "customerNumber": "1003",
+    "status": "Active",
+    "address": " 301 New Street, New Town, NA, USA",
+    "name": " Customer 3",
+    "accounts": [
+      {
+        "accountNumber": "2003",
+        "type": "Savings",
+        "status": "Open",
+        "description": " Account description"
+      }
+    ]
+  }
+]

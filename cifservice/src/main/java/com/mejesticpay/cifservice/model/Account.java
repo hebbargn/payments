@@ -1,5 +1,6 @@
 package com.mejesticpay.cifservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class Account
     private String status;
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy="accounts")
     private Set<Customer> customers = new HashSet<>();
 
