@@ -1,0 +1,30 @@
+CREATE SCHEMA rtpgateway;
+create user 'rtpgateway_user' identified by 'secret';
+grant all on rtpgateway.* to rtpgateway_user;
+
+
+CREATE TABLE `rtpgateway`.`CollectionPoint` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `from_id` VARCHAR(32) NULL,
+  `to_id` VARCHAR(32) NULL,
+  `Message_type` VARCHAR(32) NULL,
+  `Message_text` VARCHAR(10000) NULL,
+  `biz_msg_idr` VARCHAR(64) NULL,
+  `clearing_creation_dttm` DATETIME NULL,
+  `creation_time` DATETIME NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `collectionRef_UNIQUE` (`id` ASC) VISIBLE);
+
+ CREATE TABLE `rtpgateway`.`DuplicateCheck` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `instruction_id` VARCHAR(64) NULL,
+    `key1` VARCHAR(64) NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE),
+    UNIQUE INDEX `InstructionId_key1` (`instructionId` ASC, `key1` ASC) VISIBLE;
+
+CREATE TABLE `rtpgateway`.`MatchRecord` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `message_id` VARCHAR(64) NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);

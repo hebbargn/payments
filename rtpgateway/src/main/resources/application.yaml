@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    hibernate:
+      use-new-id-generator-mappings: false
+      ddl-auto: none
+  datasource:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/rtpgateway?serverTimezone=America/New_York
+      username: rtpgateway_user
+      password: secret
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer:
+      group-id: paymentgateway
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    listener:
+      ack-mode: MANUAL
+
