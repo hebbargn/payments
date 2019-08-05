@@ -22,7 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 
 @Entity
-@Table(name="transactions")
+@Table(name="payment")
 public class PaymentWrapper
 {
     @Id
@@ -103,7 +103,7 @@ public class PaymentWrapper
 
             for(Audit audit: auditEntries)
             {
-                payment.addAuditEntry(new AuditEntry(audit.getInstant(),audit.getServiceName(),audit.getMessage(),audit.getJsonData()));
+                payment.addAuditEntry(new AuditEntry(audit.getServiceName(),audit.getMessage(),audit.getJsonData()));
             }
 
         }catch (Exception e)

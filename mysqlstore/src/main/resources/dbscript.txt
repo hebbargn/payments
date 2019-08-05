@@ -2,7 +2,7 @@ create database payments;
 create user 'paymenttest' identified by 'secret';
 grant all on payments.* to paymenttest;
 
-create table transactions ( payment_ref varchar(255) not null
+create table payments.payment ( payment_ref varchar(255) not null
 ,branch varchar(255) not null
 ,source varchar(255) not null
 ,station varchar(255) not null
@@ -17,5 +17,5 @@ create table transactions ( payment_ref varchar(255) not null
  ,PRIMARY KEY (payment_ref)
  );
 
-create table audit_entries(paymentid varchar(255) not null,
+create table payments.audit_entries(paymentid varchar(255) not null,
 servicename varchar(255), instant timestamp, jsondata varchar(1024));
