@@ -1,0 +1,19 @@
+server:
+  port: 8888
+spring:
+  profiles:
+    active: jdbc
+  cloud:
+    config:
+      server:
+        default-profile: dev
+        default-label: latest
+        jdbc:
+          sql: SELECT keyname, keyvalue FROM properties WHERE application=? AND profile=? AND label=?;
+          order: 0
+  datasource:
+       url: jdbc:mysql://localhost:3306/configuration
+       driver-class-name: com.mysql.cj.jdbc.Driver
+       platform: mysql
+       username: configuration_user
+       password: secret
