@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,10 @@ public class SimpleRouter
     RestTemplate restTemplate = new RestTemplate();
 
 
+    @Value("${PaymentStoreURL}")
+    private String paymentStoreURL;
+
+    @KafkaListener(topics="${SendPaymentToSTPEngine}")
     @KafkaListener(topics="PaymentRouter")
     public void receiveMessage(ConsumerRecord<String,String>record, Acknowledgment acknowledgment)
     {
@@ -60,7 +65,7 @@ public class SimpleRouter
     {
         InFlightTransactionInfo flight = serviceFeed.getInFlightTransactionInfo();
 
-        ResponseEntity<PaymentImpl> result = restTemplate.getForEntity("http://localhost:8080/payments/"+flight.getPaymentIdentifier(),PaymentImpl.class);
+        ResponseEntity<PaymentImpl> result = restTemplate.getForEntity(paymentStoreURL+flight.getPaymentIdentifier(),PaymentImpl.class);
         Payment payment = result.getBody();
 
         String nextStation = getNextStation(serviceFeed,payment.getTrack(), flight.getCurrentStation());
@@ -106,7 +111,7 @@ public class SimpleRouter
         paymentImpl.incrementVersion();
 
         HttpEntity<Payment> request = new HttpEntity(paymentImpl);
-        ResponseEntity<PaymentImpl> response = restTemplate.exchange("http://localhost:8080/payments/"+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
+        ResponseEntity<PaymentImpl> response = restTemplate.exchange(paymentStoreURL+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
         return response.getBody();
 
 
