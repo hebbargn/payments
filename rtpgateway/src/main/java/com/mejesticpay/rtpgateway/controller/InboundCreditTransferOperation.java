@@ -3,8 +3,11 @@ package com.mejesticpay.rtpgateway.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mejesticpay.iso20022.pacs008.CreditTransferMessageParser;
 import com.mejesticpay.paymentbase.Genesis;
+import com.mejesticpay.paymentbase.InFlightTransactionInfo;
 import com.mejesticpay.paymentbase.Payment;
+import com.mejesticpay.paymentbase.ServiceFeed;
 import com.mejesticpay.paymentfactory.PaymentImpl;
+import com.mejesticpay.service.RoutePayment;
 import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
@@ -58,8 +61,12 @@ public class InboundCreditTransferOperation {
 
             logger.debug("Successfully created payment");
 
+            ServiceFeed feed = new ServiceFeed(new InFlightTransactionInfo(payment,"New"), new RoutePayment());
+            feed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
+
             // Send it to STP router
-            kafkaTemplate.send("PaymentRouter", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(payment));
+            kafkaTemplate.send("PaymentRouter", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
+
 
         } catch (XMLStreamException | JsonProcessingException e) {
             logger.error(e.getMessage(), e);
