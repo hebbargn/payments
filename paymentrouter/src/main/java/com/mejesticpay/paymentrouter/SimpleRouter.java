@@ -60,7 +60,7 @@ public class SimpleRouter
     {
         InFlightTransactionInfo flight = serviceFeed.getInFlightTransactionInfo();
 
-        ResponseEntity<PaymentImpl> result = restTemplate.getForEntity("http://localhost:8080/payments/"+flight.getPaymentIdentifier(),PaymentImpl.class);
+        ResponseEntity<PaymentImpl> result = restTemplate.getForEntity("http://localhost:8095/payments/"+flight.getPaymentIdentifier(),PaymentImpl.class);
         Payment payment = result.getBody();
 
         String nextStation = getNextStation(serviceFeed,payment.getTrack(), flight.getCurrentStation());
@@ -106,7 +106,7 @@ public class SimpleRouter
         paymentImpl.incrementVersion();
 
         HttpEntity<Payment> request = new HttpEntity(paymentImpl);
-        ResponseEntity<PaymentImpl> response = restTemplate.exchange("http://localhost:8080/payments/"+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
+        ResponseEntity<PaymentImpl> response = restTemplate.exchange("http://localhost:8095/payments/"+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
         return response.getBody();
 
 
