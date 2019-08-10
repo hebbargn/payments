@@ -21,7 +21,11 @@ public class PaymentOperation
     @Autowired
     private PaymentRepository repository;
 
-
+    @GetMapping(path="/payments")
+    public List<Object[]> getPayments()
+    {
+        return  repository.findPaymentList();
+    }
 
     @GetMapping(path="/payments/{id}")
     public Payment getPayment(@PathVariable("id") String paymentID)
