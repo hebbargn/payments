@@ -5,8 +5,9 @@ kafka-topics --describe --zookeeper localhost:2181
 kafka-topics  --zookeeper localhost:2181 --delete --topic test
 
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic new
-kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic DebitEnrichment
-kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 10 --topic PaymentRouter
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic InboundCTDebitEnrichment
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic InboundCTCreditEnrichment
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 10 --topic SendToSTPEngine
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic SanctionsCheck
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic FundsCheck
 kafka-topics --create --zookeeper localhost:2181 --replication-factor 1 --partitions 5 --topic Complete

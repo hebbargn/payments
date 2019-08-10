@@ -41,8 +41,7 @@ public class SimpleRouter
     @Value("${PaymentStoreURL}")
     private String paymentStoreURL;
 
-    @KafkaListener(topics="${SendPaymentToSTPEngine}")
-    @KafkaListener(topics="PaymentRouter")
+    @KafkaListener(topics="${SendToSTPEngine}")
     public void receiveMessage(ConsumerRecord<String,String>record, Acknowledgment acknowledgment)
     {
         logger.info(String.format("Topic - %s, Partition - %d, Value = %s", "RoutePayment", record.partition(), record.value()));

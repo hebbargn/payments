@@ -4,16 +4,23 @@
     "stations": {
       "New": {
         "name": "New",
-        "onSuccess": "DebitEnrichment",
+        "onSuccess": "InboundCTDebitEnrichment",
         "onHold": " Approval",
         "onFailure": "Cancel"
       },
-      "DebitEnrichment": {
-        "name": "DebitEnrichment",
+      "InboundCTDebitEnrichment": {
+        "name": "InboundCTDebitEnrichment",
+        "onSuccess": "InboundCTCreditEnrichment",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "InboundCTCreditEnrichment": {
+        "name": "InboundCTCreditEnrichment",
         "onSuccess": "FraudCheckService",
         "onHold": " Approval",
         "onFailure": "Cancel"
       },
+
       "FraudCheckService": {
         "name": "FraudCheckService",
         "onSuccess": "Complete",
