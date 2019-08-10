@@ -23,7 +23,11 @@ public class Customer
     private String customerNumber;
     private String status;
     private String name;
-    private String address;
+    private String street;
+    private String buildingNumber;
+    private String postalCode;
+    private String townName;
+    private String country;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="customer_account",

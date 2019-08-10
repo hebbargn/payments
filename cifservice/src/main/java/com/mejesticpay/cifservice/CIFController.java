@@ -29,15 +29,13 @@ public class CIFController
         accountRepository.save(account);
     }
 
-    @GetMapping("/customer/id")
-    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping(path="/customer/{id}")
     public Customer getCustomer(@PathVariable("id") String customerNumber)
     {
         return customerRepository.findById(customerNumber).get();
     }
 
-    @GetMapping("/account/id")
-    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping("/account/{id}")
     public Account getAccount(@PathVariable("id") String accountNumber)
     {
         return accountRepository.findById(accountNumber).get();

@@ -3,8 +3,9 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-     url: jdbc:mysql://localhost:3306/payments
-     username: paymenttest
+     driverClassName: com.mysql.cj.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/cif
+     username: cif_user
      password: secret
 
 server:

@@ -26,6 +26,8 @@ public class Account
     private String state;
     private String status;
     private String description;
+    private String name;
+
 
     @JsonIgnore
     @ManyToMany(mappedBy="accounts")
