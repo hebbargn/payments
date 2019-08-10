@@ -3,7 +3,7 @@ create user 'rtpgateway_user' identified by 'secret';
 grant all on rtpgateway.* to rtpgateway_user;
 
 
-CREATE TABLE `rtpgateway`.`CollectionPoint` (
+CREATE TABLE `rtpgateway`.`collectionpoint` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `from_id` VARCHAR(32) NULL,
   `to_id` VARCHAR(32) NULL,
@@ -15,15 +15,15 @@ CREATE TABLE `rtpgateway`.`CollectionPoint` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `collectionRef_UNIQUE` (`id` ASC) VISIBLE);
 
- CREATE TABLE `rtpgateway`.`DuplicateCheck` (
+ CREATE TABLE `rtpgateway`.`duplicatecheck` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `instruction_id` VARCHAR(64) NULL,
     `key1` VARCHAR(64) NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE),
-    UNIQUE INDEX `InstructionId_key1` (`instructionId` ASC, `key1` ASC) VISIBLE;
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+    UNIQUE INDEX `InstructionId_key1` (`instruction_id` ASC, `key1` ASC) VISIBLE);
 
-CREATE TABLE `rtpgateway`.`MatchRecord` (
+CREATE TABLE `rtpgateway`.`matchrecord` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `message_id` VARCHAR(64) NULL,
     PRIMARY KEY (`id`),

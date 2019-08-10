@@ -2,10 +2,7 @@ package com.mejesticpay.rtpgateway.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mejesticpay.iso20022.pacs008.CreditTransferMessageParser;
-import com.mejesticpay.paymentbase.Genesis;
-import com.mejesticpay.paymentbase.InFlightTransactionInfo;
-import com.mejesticpay.paymentbase.Payment;
-import com.mejesticpay.paymentbase.ServiceFeed;
+import com.mejesticpay.paymentbase.*;
 import com.mejesticpay.paymentfactory.PaymentImpl;
 import com.mejesticpay.service.RoutePayment;
 import com.mejesticpay.util.JSONHelper;
@@ -13,6 +10,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +37,12 @@ public class InboundCreditTransferOperation {
 
     RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${PaymentStoreURL}")
+    private String paymentStoreURL;
+
+    @Value("${SendToSTPEngine}")
+    private String sendToSTPEngine;
+
     @KafkaListener(topics="RTP_Inbound_CT_v06")
     public void receiveMessage(ConsumerRecord<String,String> record, Acknowledgment acknowledgment)
     {
@@ -57,7 +61,7 @@ public class InboundCreditTransferOperation {
 
             // Save Payment in database
             HttpEntity<Payment> request = new HttpEntity(payment);
-            ResponseEntity<PaymentImpl> response = restTemplate.exchange("http://localhost:8095/payments", HttpMethod.POST,request,PaymentImpl.class);
+            ResponseEntity<PaymentImpl> response = restTemplate.exchange(paymentStoreURL, HttpMethod.POST,request,PaymentImpl.class);
 
             logger.debug("Successfully created payment");
 
@@ -65,7 +69,7 @@ public class InboundCreditTransferOperation {
             feed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
 
             // Send it to STP router
-            kafkaTemplate.send("PaymentRouter", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
+            kafkaTemplate.send(sendToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
 
 
         } catch (XMLStreamException | JsonProcessingException e) {
@@ -95,6 +99,9 @@ public class InboundCreditTransferOperation {
         payment.setStatus("Ready");
 
         payment.setPaymentIdentifier(UUID.randomUUID().toString());
+
+        //TODO - Cleanup the audit here
+        payment.addAuditEntry(new AuditEntry("InboundCreditTransferOperation","Successfully create payment from PACS.008",null));
         return payment;
     }
 }
