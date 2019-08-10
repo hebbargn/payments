@@ -1,0 +1,27 @@
+server:
+  port: 8090
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer:
+              group-id: enrichmentservice
+              auto-offset-reset: earliest
+              enable-auto-commit: false
+    listener:
+      ack-mode: MANUAL
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    com.mejesticpay: DEBUG
+
+CIFRestUrl: http://localhost:8098/account/
+
+InboundCTDebitEnrichment: InboundCTDebitEnrichment
+SendPaymentToSTPEngine: SendToSTPEngine
+InboundCTCreditEnrichment: InboundCTCreditEnrichment
