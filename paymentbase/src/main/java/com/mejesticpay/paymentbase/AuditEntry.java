@@ -24,4 +24,12 @@ public class AuditEntry
         this.message = message;
         jsonData = details;
     }
+
+    public AuditEntry(Instant instant,String serviceName, String message, String details)
+    {
+        this.serviceName = serviceName;
+        this.instant = instant;
+        this.message = message;
+        jsonData = details;
+    }
 }

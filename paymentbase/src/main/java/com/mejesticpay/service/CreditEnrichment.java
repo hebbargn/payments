@@ -2,12 +2,16 @@ package com.mejesticpay.service;
 
 import com.mejesticpay.paymentbase.Party;
 import com.mejesticpay.paymentbase.ServiceData;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 /**
  * CREDIT SIDE ENRICHMENT return by credit enrichment service.
  */
+@Getter
+@Setter
 public class CreditEnrichment  implements ServiceData
 {
     /*

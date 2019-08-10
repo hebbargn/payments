@@ -54,6 +54,11 @@ public class Party
      */
     private String accountName;
 
+    /**
+     * Customer number associated with Internal Bank Party
+     */
+    private String customerNumber;
+
     /*Unique and unambiguous identification of a financial institution, asassigned under an internationally recognized or proprietary identification scheme.
     example are sort codes, BIC etc.
      */

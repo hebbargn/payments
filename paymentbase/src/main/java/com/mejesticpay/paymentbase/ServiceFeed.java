@@ -21,6 +21,10 @@ public class ServiceFeed
         this.inFlightTransactionInfo = inFlightTransactionInfo;
         this.serviceData = serviceData;
     }
+    public ServiceFeed(InFlightTransactionInfo inFlightTransactionInfo)
+    {
+        this.inFlightTransactionInfo = inFlightTransactionInfo;
+    }
 
     public  void addAuditEntry(AuditEntry auditEntry)
     {
