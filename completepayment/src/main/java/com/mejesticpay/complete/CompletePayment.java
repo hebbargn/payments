@@ -7,6 +7,7 @@ import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,12 @@ import org.springframework.web.client.RestTemplate;
 public class CompletePayment {
     private Logger logger = LoggerFactory.getLogger(CompletePayment.class);
     RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${SendPaymentToSTPEngine:SendToSTPEngine}")
+    private String SendPaymentToSTPEngine;
+
+    @Value("${PaymentStoreURL}")
+    private String paymentStoreURL;
 
     public static void main(String[] args) {
         SpringApplication.run(CompletePayment.class, args);
@@ -40,7 +47,7 @@ public class CompletePayment {
             payment.incrementVersion();
 
             HttpEntity<Payment> request = new HttpEntity(payment);
-            ResponseEntity<PaymentImpl> response = restTemplate.exchange("http://localhost:8080/payments/"+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
+            ResponseEntity<PaymentImpl> response = restTemplate.exchange(paymentStoreURL+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
 
             logger.info("Successfully completed the payment");
 

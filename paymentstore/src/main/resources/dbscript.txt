@@ -18,4 +18,5 @@ create table payments.payment ( payment_ref varchar(255) not null
  );
 
 create table payments.audit_entries(paymentid varchar(255) not null,
-servicename varchar(255), instant timestamp, jsondata varchar(1024));
+service_name varchar(255), message varchar(255), instant timestamp, json_data varchar(1024));
+

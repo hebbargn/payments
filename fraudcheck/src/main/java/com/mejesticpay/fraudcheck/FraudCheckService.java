@@ -2,13 +2,13 @@ package com.mejesticpay.fraudcheck;
 
 import com.mejesticpay.paymentbase.*;
 import com.mejesticpay.paymentfactory.PaymentImpl;
-import com.mejesticpay.service.DebitEnrichment;
 import com.mejesticpay.service.FraudCheckInfo;
 import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -29,6 +29,9 @@ public class FraudCheckService
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Value("${SendPaymentToSTPEngine:SendToSTPEngine}")
+    private String SendPaymentToSTPEngine;
 
 
     @KafkaListener(topics = "FraudCheckService")
@@ -51,7 +54,7 @@ public class FraudCheckService
             feed.addAuditEntry(entry);
             feed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
 
-            kafkaTemplate.send("PaymentRouter", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
+            kafkaTemplate.send(SendPaymentToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
             logger.info(JSONHelper.convertToPrettyStringFromObject(feed));
             logger.info("Successfully processed FraudCheckService");
 
