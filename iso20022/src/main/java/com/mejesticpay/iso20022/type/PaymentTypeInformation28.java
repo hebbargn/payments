@@ -1,5 +1,6 @@
 package com.mejesticpay.iso20022.type;
 
+import com.mejesticpay.iso20022.base.ISOUtil;
 import com.mejesticpay.iso20022.base.XMLParser;
 import com.mejesticpay.paymentbase.Genesis;
 import org.apache.logging.log4j.LogManager;
@@ -27,26 +28,26 @@ public class PaymentTypeInformation28 extends XMLParser
 
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("InstrId")) {
-                    String InstrId = xmlStreamReader.getElementText();
-                    System.out.println(InstrId);
-                    genesis.setInstructionId(InstrId);
+                    String instrId = ISOUtil.randomizeString(xmlStreamReader.getElementText());                    
+                    logger.debug(instrId);
+                    genesis.setInstructionId(instrId);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("EndToEndId")) {
-                    String EndToEndId = xmlStreamReader.getElementText();
-                    System.out.println(EndToEndId);
-                    genesis.setEndToendId(EndToEndId);
+                    String endToEndId = ISOUtil.randomizeString(xmlStreamReader.getElementText());
+                    logger.debug(endToEndId);
+                    genesis.setEndToendId(endToEndId);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("TxId")) {
                     String TxId = xmlStreamReader.getElementText();
-                    System.out.println(TxId);
+                    logger.debug(TxId);
                     genesis.setTransactionId(TxId);
                 }
 
                 if (xmlStreamReader.getLocalName().equalsIgnoreCase("ClrSysRef")) {
                     String ClrSysRef = xmlStreamReader.getElementText();
-                    System.out.println(ClrSysRef);
+                    logger.debug(ClrSysRef);
                     genesis.setClearingSystemReference(ClrSysRef);
                 }
             }

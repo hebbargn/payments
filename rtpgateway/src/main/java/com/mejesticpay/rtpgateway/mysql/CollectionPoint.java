@@ -18,9 +18,13 @@ public class CollectionPoint
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Unique and unambiguous identification of a financial institution sending message.
     private String from_id;
+    // // Unique and unambiguous identification of a financial institution receiving message.
     private String to_id;
-//    private String biz_msg_idr;
+    // Business Message Identifier. Assigned by the sender of the message
+    private String biz_msg_idr;
+    // Message Identifier that defines the Business Message. For example: pacs.008.001.06
     private String message_type;
     // Date and Time recrod was created by clearing. value comes from application header.
     private LocalDateTime clearing_creation_dttm;
@@ -29,5 +33,8 @@ public class CollectionPoint
     private LocalDateTime creation_time;
     // Message Received from clearing
     private String message_text;
+
+    // Indicates whether the message is a Copy, a Duplicate, or a copy of a duplicate of a previously sent ISO 20022 Message.
+    private String copy_duplicate;
 
 }

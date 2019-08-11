@@ -4,13 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mejesticpay.iso20022.pacs008.CreditTransferMessageParser;
 import com.mejesticpay.paymentbase.*;
 import com.mejesticpay.paymentfactory.PaymentImpl;
+import com.mejesticpay.rtpgateway.mysql.DuplicateCheck;
+import com.mejesticpay.rtpgateway.mysql.DuplicateCheckRepository;
 import com.mejesticpay.service.RoutePayment;
 import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +39,10 @@ public class InboundCreditTransferOperation {
     @Autowired
     private KafkaTemplate<String,String> kafkaTemplate;
 
+    @Autowired
+    @Qualifier("CustomDuplicateCheck")
+    private DuplicateCheckRepository duplicateCheckRepository;
+
     RestTemplate restTemplate = new RestTemplate();
 
     @Value("${PaymentStoreURL}")
@@ -52,7 +60,9 @@ public class InboundCreditTransferOperation {
         try {
             Genesis genesis = new CreditTransferMessageParser().createGenesis(reader);
 
-            // TODO: Perform duplicate check
+            // Perform duplicate check
+            performDuplicateCheck(genesis);
+
             // TODO: SLA check
             // TODO: If above checks fail, sends pacs.002 rejection back by creating Distribution object.
 
@@ -83,6 +93,19 @@ public class InboundCreditTransferOperation {
         }
         acknowledgment.acknowledge();
 
+    }
+
+    public void performDuplicateCheck(Genesis genesis)
+    {
+        DuplicateCheck duplicateCheck = new DuplicateCheck();
+        duplicateCheck.setInstruction_id(genesis.getInstructionId());
+        try {
+            duplicateCheckRepository.save(duplicateCheck);
+        } catch (DuplicateKeyException e)
+        {
+            // TODO: Handle duplicate check
+            logger.error(e.getMessage(), e);
+        }
     }
 
     public Payment generatePayment(Genesis origination)

@@ -2,6 +2,7 @@ package com.mejesticpay.rtpgateway.controller;
 
 import com.mejesticpay.iso20022.base.ISOUtil;
 import com.mejesticpay.iso20022.pacs008.CreditTransferMessageParser;
+import com.mejesticpay.iso20022.type.BusinessApplicationHeader;
 import com.mejesticpay.paymentbase.Genesis;
 import com.mejesticpay.rtpgateway.mysql.CollectionPoint;
 import com.mejesticpay.rtpgateway.mysql.CollectionPointRepository;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 public class InboundOperation
@@ -43,9 +45,12 @@ public class InboundOperation
             logger.debug("Received : " + inputMessage);
 
         String msgType = null;
+        BusinessApplicationHeader header = null;
 
         try {
-            msgType = ISOUtil.getMessageType(inputMessage);
+            header = ISOUtil.getBusinessAppHeader(inputMessage);
+            msgType = header.getMsgDefIdr();
+//            msgType = ISOUtil.getMessageType(inputMessage);
             logger.debug("Received message type: " + msgType);
         } catch (XMLStreamException e) {
             logger.error(e.getMessage(), e);
@@ -54,16 +59,20 @@ public class InboundOperation
         if ("pacs.008.001.06".equals(msgType)) {
             logger.debug("Processing " + msgType + " message.");
 
-            // TODO: Store message in database.
+            // Store message in database.
             CollectionPoint cp = new CollectionPoint();
+            cp.setMessage_type(header.getMsgDefIdr());
+            cp.setBiz_msg_idr(header.getBizMsgIdr());
+            cp.setFrom_id(header.getFromMemberId());
+            cp.setTo_id(header.getToMemberId());
+            cp.setCopy_duplicate(header.getCopyDuplicate());
             cp.setMessage_text(inputMessage);
-            cp.setMessage_type("pacs.008.001.06");
+            cp.setClearing_creation_dttm(LocalDateTime.parse(header.getCreationDttm(), DateTimeFormatter.ISO_DATE_TIME));
             cp.setCreation_time(LocalDateTime.now());
-            // TODO: Set other values
 
             collectionPointRepository.save(cp);
 
-            // Perform Schema validation based on configuration.
+            // TODO: To Perform Schema validation, uncomment below line. Do it based on configuration.
 //            XmlValidationUtil.validate(inputMessage, "xsd location");
 
             // Send it to Kafka topic

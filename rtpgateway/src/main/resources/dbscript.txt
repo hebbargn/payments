@@ -12,6 +12,7 @@ CREATE TABLE `rtpgateway`.`collectionpoint` (
   `biz_msg_idr` VARCHAR(64) NULL,
   `clearing_creation_dttm` DATETIME NULL,
   `creation_time` DATETIME NULL,
+  `copy_duplicate` VARCHAR(16) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `collectionRef_UNIQUE` (`id` ASC) VISIBLE);
 
