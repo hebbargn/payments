@@ -121,7 +121,7 @@ public class PaymentWrapper
         status = payment.getStatus();
         station = payment.getStation();
         track = payment.getTrack();
-        version = payment.getVersion();
+        version = version+1;
         source = payment.getSource();
         branch = payment.getBranch();
 

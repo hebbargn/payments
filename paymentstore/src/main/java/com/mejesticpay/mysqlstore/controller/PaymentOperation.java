@@ -49,6 +49,8 @@ public class PaymentOperation
     @PostMapping("/payments")
     public Payment createPayment(@RequestBody PaymentImpl payment)
     {
+        // When creating payment, start with version = 1.
+        payment.setVersion(1);
         PaymentWrapper pw = new PaymentWrapper(payment);
         repository.save(pw);
         return payment;
