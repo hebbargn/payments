@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,12 @@ public class PaymentWrapper
     private String json_credit_enrich;
     private String json_fraud_check;
 
+    // System Data
+    private Instant created_time;
+    private Instant last_updated_time;
+    private String  created_by;
+    private String  last_updated_by;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name="audit_entries", joinColumns = @JoinColumn(name="paymentid"))
     private Set<Audit> auditEntries = new HashSet<>();
@@ -59,6 +66,9 @@ public class PaymentWrapper
         version = payment.getVersion();
         source = payment.getSource();
         branch = payment.getBranch();
+        if(payment.getCreatedTime() == null)
+            created_time = Instant.now();
+        created_by = payment.getCreatedBy();
 
         try
         {
@@ -79,7 +89,12 @@ public class PaymentWrapper
         {
             for(AuditEntry ae: audits)
             {
-                auditEntries.add(new Audit(ae.getServiceName(),ae.getInstant(), ae.getMessage(),ae.getJsonData()));
+                if(ae.isProcessed())
+                    continue;
+
+                Audit audit = new Audit(ae.getServiceName(),ae.getInstant(), ae.getMessage(),ae.getJsonData());
+                audit.setProcessed(true);
+                auditEntries.add(audit);
             }
         }
     }
@@ -103,7 +118,9 @@ public class PaymentWrapper
 
             for(Audit audit: auditEntries)
             {
-                payment.addAuditEntry(new AuditEntry(audit.getServiceName(),audit.getMessage(),audit.getJsonData()));
+                AuditEntry auditEntry = new AuditEntry(audit.getInstant(), audit.getServiceName(),audit.getMessage(),audit.getJsonData());
+                auditEntry.setProcessed(audit.isProcessed());
+                payment.addAuditEntry(auditEntry);
             }
 
         }catch (Exception e)
@@ -122,6 +139,9 @@ public class PaymentWrapper
         station = payment.getStation();
         track = payment.getTrack();
         version = version+1;
+        last_updated_time = Instant.now();
+        last_updated_by = payment.getLastUpdatedBy();
+        created_by = payment.getCreatedBy();
         source = payment.getSource();
         branch = payment.getBranch();
 
@@ -135,6 +155,9 @@ public class PaymentWrapper
                 json_credit_enrich = JSONHelper.convertToStringFromObject(payment.getCreditEnrichment());
             if(payment.getFraudCheckInfo() != null)
                 json_fraud_check = JSONHelper.convertToStringFromObject(payment.getFraudCheckInfo());
+
+            addAudits(payment.getAuditEntries());
+
         }catch (Exception e)
         {
             e.printStackTrace();

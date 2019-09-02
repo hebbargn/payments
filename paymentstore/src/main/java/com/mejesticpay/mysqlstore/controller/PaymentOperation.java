@@ -5,13 +5,14 @@ import com.mejesticpay.mysqlstore.mysql.PaymentRepository;
 import com.mejesticpay.mysqlstore.mysql.PaymentWrapper;
 import com.mejesticpay.paymentbase.Payment;
 import com.mejesticpay.paymentfactory.PaymentImpl;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @RestController
@@ -52,8 +53,8 @@ public class PaymentOperation
         // When creating payment, start with version = 1.
         payment.setVersion(1);
         PaymentWrapper pw = new PaymentWrapper(payment);
-        repository.save(pw);
-        return payment;
+        pw = repository.save(pw);
+        return pw.getPayment();
     }
 
     @PutMapping("/payments/{id}")

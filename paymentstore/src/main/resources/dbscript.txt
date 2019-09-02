@@ -14,9 +14,18 @@ create table payments.payment ( payment_ref varchar(255) not null
 ,json_debit_enrich varchar(2000)
 ,json_credit_enrich varchar(2000)
 ,json_fraud_check varchar(2000)
- ,PRIMARY KEY (payment_ref)
+,created_by varchar(255)
+,created_time timestamp
+,last_updated_by varchar(255)
+,last_updated_time timestamp
+,PRIMARY KEY (payment_ref)
  );
 
-create table payments.audit_entries(paymentid varchar(255) not null,
-service_name varchar(255), message varchar(255), instant timestamp, json_data varchar(1024));
-
+create table payments.audit_entries(
+paymentid varchar(255) not null,
+service_name varchar(255),
+message varchar(255),
+instant timestamp,
+json_data varchar(1024),
+processed boolean
+);

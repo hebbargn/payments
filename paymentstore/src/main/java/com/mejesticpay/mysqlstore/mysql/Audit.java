@@ -17,6 +17,7 @@ public class Audit
     private Instant instant;
     private String jsonData;
     private String serviceName;
+    private boolean processed;
 
     Audit(String service,Instant instant, String message, String jsonData)
     {
