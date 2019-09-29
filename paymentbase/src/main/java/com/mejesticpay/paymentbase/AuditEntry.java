@@ -16,7 +16,6 @@ public class AuditEntry
     private String message;
     private Instant instant;
     private String jsonData;
-    private boolean processed;
 
     public AuditEntry(String serviceName, String message, String details)
     {

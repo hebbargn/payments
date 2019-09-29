@@ -25,4 +25,5 @@ public abstract class TransactionImpl implements Transaction
 
     public void incrementVersion() { ++ version;}
 
+
 }

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Setter @Getter @NoArgsConstructor @ToString
 public class DebitEnrichment  implements ServiceData
 {
@@ -25,5 +27,7 @@ public class DebitEnrichment  implements ServiceData
      * Indirect participant that has account with this bank.
      */
     private Party indirectParticipant;
+
+    private LocalDate settlementDate;
 
 }

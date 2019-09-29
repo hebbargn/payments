@@ -14,6 +14,9 @@ public class InFlightTransactionInfo
     private String currentStation;
     private String state;
     private String requestedState;
+    private String status;
+    private String track;
+    private String branch;
 
     public InFlightTransactionInfo(Payment payment, String currentStation)
     {
