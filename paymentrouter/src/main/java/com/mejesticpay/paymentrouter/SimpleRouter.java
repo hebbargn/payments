@@ -23,8 +23,6 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Instant;
-
 @Service
 public class SimpleRouter
 {
@@ -44,7 +42,7 @@ public class SimpleRouter
     @KafkaListener(topics="${SendToSTPEngine}")
     public void receiveMessage(ConsumerRecord<String,String>record, Acknowledgment acknowledgment)
     {
-        logger.info(String.format("Topic - %s, Partition - %d, Value = %s", "RoutePayment", record.partition(), record.value()));
+        logger.info(String.format("Topic - %s, Partition - %d, Value = %s", "SendToSTPEngine", record.partition(), record.value()));
 
         ServiceFeed feed = null;
         try
@@ -100,14 +98,12 @@ public class SimpleRouter
             return payment;
         }
 
-        paymentImpl.setLastUpdatedTime(Instant.now());
         paymentImpl.setStation(nextStation);
         paymentImpl.addAuditEntries(serviceFeed.getAuditEntries());
 
         AuditEntry entry = new AuditEntry( SimpleRouter.class.getName(),serviceFeed.getInFlightTransactionInfo().getCurrentStation()+" Service Data",
                 JSONHelper.convertToStringFromObject(serviceFeed.getServiceData()));
         paymentImpl.addAuditEntry(entry);
-        paymentImpl.incrementVersion();
 
         HttpEntity<Payment> request = new HttpEntity(paymentImpl);
         ResponseEntity<PaymentImpl> response = restTemplate.exchange(paymentStoreURL+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);

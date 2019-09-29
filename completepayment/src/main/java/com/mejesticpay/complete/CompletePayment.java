@@ -42,14 +42,14 @@ public class CompletePayment {
             PaymentImpl payment = JSONHelper.convertToObjectFromJson(record.value(), PaymentImpl.class);
 
             payment.setStation("Complete");
-            AuditEntry entry = new AuditEntry( CompletePayment.class.getName(),"Successfully completed the payment", null);
+            AuditEntry entry = new AuditEntry( CompletePayment.class.getName(),"Successfully completed payment.", null);
             payment.addAuditEntry(entry);
             payment.incrementVersion();
 
             HttpEntity<Payment> request = new HttpEntity(payment);
             ResponseEntity<PaymentImpl> response = restTemplate.exchange(paymentStoreURL+payment.getPaymentIdentifier(), HttpMethod.PUT,request,PaymentImpl.class);
 
-            logger.info("Successfully completed the payment");
+            logger.info("Successfully completed payment with Id: " + payment.getPaymentIdentifier());
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

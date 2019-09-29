@@ -1,4 +1,4 @@
-package com.mejesticpay.mysqlstore.model;
+package com.mejesticpay.mysqlstore.mysql;
 
 import com.mejesticpay.paymentbase.AuditEntry;
 import com.mejesticpay.paymentbase.Genesis;
@@ -11,21 +11,20 @@ import com.mejesticpay.util.JSONHelper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 
-@DynamicUpdate
 @Entity
 @Table(name="payment")
-public class PaymentWrapper extends CommonBase implements Serializable
+public class PaymentWrapper
 {
     @Id
     private String paymentRef;
@@ -35,6 +34,7 @@ public class PaymentWrapper extends CommonBase implements Serializable
     private String status;
     private String station;
     private String track;
+    private int version;
 
     private String source;
     private String branch;
@@ -46,10 +46,15 @@ public class PaymentWrapper extends CommonBase implements Serializable
     private String json_credit_enrich;
     private String json_fraud_check;
 
+    // System Data
+    private Instant created_time;
+    private Instant last_updated_time;
+    private String  created_by;
+    private String  last_updated_by;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name="audit_entries", joinColumns = @JoinColumn(name="paymentid"))
     private Set<Audit> auditEntries = new HashSet<>();
-
 
     public PaymentWrapper( Payment payment)
     {
@@ -61,6 +66,9 @@ public class PaymentWrapper extends CommonBase implements Serializable
         version = payment.getVersion();
         source = payment.getSource();
         branch = payment.getBranch();
+        if(payment.getCreatedTime() == null)
+            created_time = Instant.now();
+        created_by = payment.getCreatedBy();
 
         try
         {
@@ -75,15 +83,18 @@ public class PaymentWrapper extends CommonBase implements Serializable
         }
     }
 
-
-
     void addAudits(List<AuditEntry> audits)
     {
         if(audits != null)
         {
             for(AuditEntry ae: audits)
             {
-                auditEntries.add(new Audit(ae.getServiceName(),ae.getInstant(), ae.getMessage(),ae.getJsonData()));
+                if(ae.isProcessed())
+                    continue;
+
+                Audit audit = new Audit(ae.getServiceName(),ae.getInstant(), ae.getMessage(),ae.getJsonData());
+                audit.setProcessed(true);
+                auditEntries.add(audit);
             }
         }
     }
@@ -100,18 +111,16 @@ public class PaymentWrapper extends CommonBase implements Serializable
 
         try
         {
-            if(json_genesis != null)
-                payment.setGenesis(JSONHelper.convertToObjectFromJson(json_genesis, Genesis.class));
-            if(json_debit_enrich != null)
-                payment.setDebitEnrichment(JSONHelper.convertToObjectFromJson(json_debit_enrich, DebitEnrichment.class));
-            if(json_credit_enrich != null)
-                payment.setCreditEnrichment(JSONHelper.convertToObjectFromJson(json_credit_enrich, CreditEnrichment.class));
-            if(json_fraud_check != null)
-                payment.setFraudCheckInfo(JSONHelper.convertToObjectFromJson(json_fraud_check, FraudCheckInfo.class));
+            payment.setGenesis(JSONHelper.convertToObjectFromJson(json_genesis, Genesis.class));
+            payment.setDebitEnrichment(JSONHelper.convertToObjectFromJson(json_debit_enrich, DebitEnrichment.class));
+            payment.setCreditEnrichment(JSONHelper.convertToObjectFromJson(json_credit_enrich, CreditEnrichment.class));
+            payment.setFraudCheckInfo(JSONHelper.convertToObjectFromJson(json_fraud_check, FraudCheckInfo.class));
 
             for(Audit audit: auditEntries)
             {
-                payment.addAuditEntry(new AuditEntry(audit.getServiceName(),audit.getMessage(),audit.getJsonData()));
+                AuditEntry auditEntry = new AuditEntry(audit.getInstant(), audit.getServiceName(),audit.getMessage(),audit.getJsonData());
+                auditEntry.setProcessed(audit.isProcessed());
+                payment.addAuditEntry(auditEntry);
             }
 
         }catch (Exception e)
@@ -130,6 +139,9 @@ public class PaymentWrapper extends CommonBase implements Serializable
         station = payment.getStation();
         track = payment.getTrack();
         version = version+1;
+        last_updated_time = Instant.now();
+        last_updated_by = payment.getLastUpdatedBy();
+        created_by = payment.getCreatedBy();
         source = payment.getSource();
         branch = payment.getBranch();
 
@@ -143,14 +155,12 @@ public class PaymentWrapper extends CommonBase implements Serializable
                 json_credit_enrich = JSONHelper.convertToStringFromObject(payment.getCreditEnrichment());
             if(payment.getFraudCheckInfo() != null)
                 json_fraud_check = JSONHelper.convertToStringFromObject(payment.getFraudCheckInfo());
+
+            addAudits(payment.getAuditEntries());
+
         }catch (Exception e)
         {
             e.printStackTrace();
         }
     }
-
-
-
-
-
 }

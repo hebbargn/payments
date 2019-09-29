@@ -125,6 +125,7 @@ public class InboundCreditTransferOperation {
 
         //TODO - Cleanup the audit here
         payment.addAuditEntry(new AuditEntry("InboundCreditTransferOperation","Successfully create payment from PACS.008",null));
+        payment.setCreatedBy("RTPGateway");
         return payment;
     }
 }
