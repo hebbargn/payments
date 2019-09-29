@@ -1,4 +1,4 @@
-package com.mejesticpay.mysqlstore.mysql;
+package com.mejesticpay.mysqlstore.model;
 
 import com.mejesticpay.paymentbase.AuditEntry;
 import com.mejesticpay.paymentbase.Genesis;
@@ -11,19 +11,21 @@ import com.mejesticpay.util.JSONHelper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 
+@DynamicUpdate
 @Entity
 @Table(name="payment")
-public class PaymentWrapper
+public class PaymentWrapper extends CommonBase implements Serializable
 {
     @Id
     private String paymentRef;
@@ -33,7 +35,6 @@ public class PaymentWrapper
     private String status;
     private String station;
     private String track;
-    private int version;
 
     private String source;
     private String branch;
@@ -48,6 +49,7 @@ public class PaymentWrapper
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name="audit_entries", joinColumns = @JoinColumn(name="paymentid"))
     private Set<Audit> auditEntries = new HashSet<>();
+
 
     public PaymentWrapper( Payment payment)
     {
@@ -73,6 +75,8 @@ public class PaymentWrapper
         }
     }
 
+
+
     void addAudits(List<AuditEntry> audits)
     {
         if(audits != null)
@@ -96,10 +100,14 @@ public class PaymentWrapper
 
         try
         {
-            payment.setGenesis(JSONHelper.convertToObjectFromJson(json_genesis, Genesis.class));
-            payment.setDebitEnrichment(JSONHelper.convertToObjectFromJson(json_debit_enrich, DebitEnrichment.class));
-            payment.setCreditEnrichment(JSONHelper.convertToObjectFromJson(json_credit_enrich, CreditEnrichment.class));
-            payment.setFraudCheckInfo(JSONHelper.convertToObjectFromJson(json_fraud_check, FraudCheckInfo.class));
+            if(json_genesis != null)
+                payment.setGenesis(JSONHelper.convertToObjectFromJson(json_genesis, Genesis.class));
+            if(json_debit_enrich != null)
+                payment.setDebitEnrichment(JSONHelper.convertToObjectFromJson(json_debit_enrich, DebitEnrichment.class));
+            if(json_credit_enrich != null)
+                payment.setCreditEnrichment(JSONHelper.convertToObjectFromJson(json_credit_enrich, CreditEnrichment.class));
+            if(json_fraud_check != null)
+                payment.setFraudCheckInfo(JSONHelper.convertToObjectFromJson(json_fraud_check, FraudCheckInfo.class));
 
             for(Audit audit: auditEntries)
             {
@@ -140,4 +148,9 @@ public class PaymentWrapper
             e.printStackTrace();
         }
     }
+
+
+
+
+
 }

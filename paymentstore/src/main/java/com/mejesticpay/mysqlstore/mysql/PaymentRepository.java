@@ -1,11 +1,14 @@
 package com.mejesticpay.mysqlstore.mysql;
 
 
+import com.mejesticpay.mysqlstore.model.PaymentWrapper;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface PaymentRepository extends CrudRepository<PaymentWrapper,String>
 {
     public static final String FIND_PAYMENT_HEADERS = "select payment_ref as paymentReference,source, branch, JSON_EXTRACT(json_genesis,\"$.settlementAmount\") as amount,JSON_EXTRACT(json_genesis,\"$.settlementCurrency\") as currency, station as service, \n" +

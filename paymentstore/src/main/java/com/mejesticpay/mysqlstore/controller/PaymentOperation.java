@@ -2,10 +2,11 @@ package com.mejesticpay.mysqlstore.controller;
 
 
 import com.mejesticpay.mysqlstore.mysql.PaymentRepository;
-import com.mejesticpay.mysqlstore.mysql.PaymentWrapper;
+import com.mejesticpay.mysqlstore.model.PaymentWrapper;
 import com.mejesticpay.paymentbase.Payment;
 import com.mejesticpay.paymentfactory.PaymentImpl;
 
+import org.apache.ignite.Ignite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,13 @@ public class PaymentOperation
     @Autowired
     private PaymentRepository repository;
 
+
+    //@Autowired
+    //private IgnitePaymentRepository ignitePaymentrepository;
+
+    @Autowired
+    private Ignite ignite;
+
     @GetMapping(path="/payments")
     public List<Object[]> getPayments()
     {
@@ -30,7 +38,8 @@ public class PaymentOperation
     @GetMapping(path="/payments/{id}")
     public Payment getPayment(@PathVariable("id") String paymentID)
     {
-        return  repository.findById(paymentID).get().getPayment();
+        return ((PaymentWrapper)ignite.getOrCreateCache("PaymentsCache").get(paymentID)).getPayment();
+        //return  repository.findById(paymentID).get().getPayment();
     }
 
     @DeleteMapping(path="/payments/{id}")
@@ -53,6 +62,8 @@ public class PaymentOperation
         payment.setVersion(1);
         PaymentWrapper pw = new PaymentWrapper(payment);
         repository.save(pw);
+       // ignitePaymentrepository.save(pw);
+        //ignite.getOrCreateCache("PaymentsCache").put(pw.getPaymentRef(),pw);
         return payment;
     }
 
@@ -71,5 +82,12 @@ public class PaymentOperation
         return null;
     }
 
+  /*  @PutMapping("/payments/{service}/{id}")
+    public Payment updatePayment(@RequestBody PaymentImpl payment, @PathVariable String service, @PathVariable String id)
+    {
+        PaymentWrapper pw =  PaymentWrapper.updateForService(payment,service);
+        pw = repository.save(pw);
+        return pw.getPayment();
+    }*/
 
 }
