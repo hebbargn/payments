@@ -28,3 +28,4 @@ logging:
 
 SendToSTPEngine: SendToSTPEngine
 PaymentStoreURL: http://localhost:8095/payments/
+CommandStoreURL: http://localhost:8096/commands/stpupdate

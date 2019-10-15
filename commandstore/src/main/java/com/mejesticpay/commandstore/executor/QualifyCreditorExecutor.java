@@ -24,15 +24,14 @@ public class QualifyCreditorExecutor extends BaseExecutor
         try
         {
             STPServiceCommand stpServiceCommand = (STPServiceCommand)command;
-            ServiceFeed serviceFeed = stpServiceCommand.getServiceFeed();
-            InFlightTransactionInfo inFlight = serviceFeed.getInFlightTransactionInfo();
+            InFlightTransactionInfo inFlight = stpServiceCommand.getTransactionInfo();
 
             int newVersion = inFlight.getVersion() + 1;
             PaymentId paymentID = new PaymentId(inFlight.getPaymentIdentifier(), newVersion);
 
             PaymentTransactionModel transaction = updateTransaction(paymentID,inFlight );
 
-            CreditEnrichment creditEnrichment = (CreditEnrichment)serviceFeed.getServiceData();
+            CreditEnrichment creditEnrichment = (CreditEnrichment)stpServiceCommand.getServiceData();
             CreditEnrichmentModel creditEnrichmentModel = new CreditEnrichmentModel();
             creditEnrichmentModel.setPaymentId(paymentID);
             creditEnrichmentModel.setCreditAccount(creditEnrichment.getCreditParty().getAccountNumber());
@@ -41,7 +40,7 @@ public class QualifyCreditorExecutor extends BaseExecutor
             creditEnrichmentModel.setCreatedTime(Instant.now());
             context.getCreditEnrichmentRepos().save(creditEnrichmentModel);
 
-            saveAuditEntries("CreditEnrichment", inFlight.getPaymentIdentifier(),serviceFeed.getAuditEntries());
+            saveAuditEntries("CreditEnrichment", inFlight.getPaymentIdentifier(),stpServiceCommand.getAuditEntries());
 
             return transaction;
 

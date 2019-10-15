@@ -25,14 +25,13 @@ public class CompletePaymentExecutor  extends BaseExecutor
         try
         {
             STPServiceCommand stpServiceCommand = (STPServiceCommand) command;
-            ServiceFeed serviceFeed = stpServiceCommand.getServiceFeed();
-            InFlightTransactionInfo inFlight = serviceFeed.getInFlightTransactionInfo();
+            InFlightTransactionInfo inFlight = stpServiceCommand.getTransactionInfo();
 
             int newVersion = inFlight.getVersion() + 1;
             PaymentId paymentID = new PaymentId(inFlight.getPaymentIdentifier(), newVersion);
             PaymentTransactionModel transaction = updateTransaction(paymentID, inFlight);
 
-            saveAuditEntries("CompletePayment", inFlight.getPaymentIdentifier(), serviceFeed.getAuditEntries());
+            saveAuditEntries("CompletePayment", inFlight.getPaymentIdentifier(), stpServiceCommand.getAuditEntries());
 
             return transaction;
 

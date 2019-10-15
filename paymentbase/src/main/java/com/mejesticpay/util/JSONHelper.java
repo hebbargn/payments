@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.mejesticpay.paymentfactory.PaymentImpl;
 import com.mejesticpay.service.*;
 
 import java.io.IOException;
@@ -21,6 +22,8 @@ public class JSONHelper
         mapper.registerSubtypes(new NamedType(FraudCheckInfo.class,"FraudCheckInfo"));
         mapper.registerSubtypes(new NamedType(SanctionsCheckInfo.class,"SanctionsCheckInfo"));
         mapper.registerSubtypes(new NamedType(AccountingInfo.class,"AccountingInfo"));
+        mapper.registerSubtypes(new NamedType(PaymentImpl.class,"Payment"));
+
         mapper.registerModule(new JavaTimeModule());
 
     }

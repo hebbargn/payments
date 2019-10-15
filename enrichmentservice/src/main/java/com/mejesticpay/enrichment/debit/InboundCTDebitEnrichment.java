@@ -7,6 +7,7 @@ import com.mejesticpay.enrichment.util.PartyLookupResponse;
 import com.mejesticpay.paymentbase.*;
 import com.mejesticpay.paymentfactory.PaymentImpl;
 import com.mejesticpay.service.DebitEnrichment;
+import com.mejesticpay.stp.STPInboundData;
 import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class InboundCTDebitEnrichment
             logger.info(String.format("Topic - %s, Partition - %d, Value = %s", serviceName, record.partition(), record.value()));
 
             Payment payment = JSONHelper.convertToObjectFromJson(record.value(), PaymentImpl.class);
-            ServiceFeed serviceFeed = new ServiceFeed(new InFlightTransactionInfo(payment,serviceName));
+            STPInboundData stpInboundData = new STPInboundData(payment,serviceName);
 
             DebitEnrichment debitEnrich = new DebitEnrichment();
             PartyLookupRequest request = new PartyLookupRequest(PartyLookupRequest.LookupType.CLEARING);
@@ -52,24 +53,23 @@ public class InboundCTDebitEnrichment
                 Party debitParty = new Party();
                 result.applyToParty(debitParty);
                 debitEnrich.setDebitParty(debitParty);
-                serviceFeed.setServiceData(debitEnrich);
+                stpInboundData.setServiceData(debitEnrich);
 
                 String auditMessage = "Successfully enriched debit party from Clearing Account.";
                 String detailsJSON = JSONHelper.convertToStringFromObject(result);
                 AuditEntry auditEntry = new AuditEntry(serviceName,auditMessage,detailsJSON);
-                serviceFeed.addAuditEntry(auditEntry);
+                stpInboundData.addAuditEntry(auditEntry);
 
-                serviceFeed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
+                stpInboundData.setResult(STPInboundData.PROCESSING_RESULT.SUCCESS);
             }
             else
             {
                 AuditEntry auditEntry = new AuditEntry(serviceName,"Failed to enrich from Clearing Account",null);
-                serviceFeed.addAuditEntry(auditEntry);
-                serviceFeed.setResult(ServiceFeed.PROCESSING_RESULT.FAILURE);
+                stpInboundData.addAuditEntry(auditEntry);
+                stpInboundData.setResult(STPInboundData.PROCESSING_RESULT.FAILURE);
             }
-
-            kafkaTemplate.send(SendPaymentToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(serviceFeed));
-            logger.info(JSONHelper.convertToPrettyStringFromObject(serviceFeed));
+            kafkaTemplate.send(SendPaymentToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(stpInboundData));
+            logger.info(JSONHelper.convertToPrettyStringFromObject(stpInboundData));
             logger.info("Successfully processed inbound CT Debit enrichment");
 
         } catch (Exception e)

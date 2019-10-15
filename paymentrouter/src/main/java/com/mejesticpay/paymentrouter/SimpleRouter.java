@@ -23,12 +23,17 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.PrivateKey;
+
 @Service
 public class SimpleRouter
 {
     private Logger logger = LoggerFactory.getLogger(SimpleRouter.class);
     @Autowired
     private TracksConfig.Tracks tracks;
+
+    @Autowired
+    private PrivateKey privateKey;
 
     @Autowired
     private KafkaTemplate<String,String> kafkaTemplate;
@@ -39,7 +44,7 @@ public class SimpleRouter
     @Value("${PaymentStoreURL}")
     private String paymentStoreURL;
 
-    @KafkaListener(topics="${SendToSTPEngine}")
+   // @KafkaListener(topics="${SendToSTPEngine}")
     public void receiveMessage(ConsumerRecord<String,String>record, Acknowledgment acknowledgment)
     {
         logger.info(String.format("Topic - %s, Partition - %d, Value = %s", "SendToSTPEngine", record.partition(), record.value()));

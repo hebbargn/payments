@@ -23,9 +23,8 @@ public class QualifyDebtorExecutor extends BaseExecutor
         try
         {
             STPServiceCommand stpServiceCommand = (STPServiceCommand)command;
-            ServiceFeed serviceFeed = stpServiceCommand.getServiceFeed();
-            DebitEnrichment debitEnrichment = (DebitEnrichment)serviceFeed.getServiceData();
-            InFlightTransactionInfo inFlight = serviceFeed.getInFlightTransactionInfo();
+            DebitEnrichment debitEnrichment = (DebitEnrichment)stpServiceCommand.getServiceData();
+            InFlightTransactionInfo inFlight = stpServiceCommand.getTransactionInfo();
 
             int newVersion = inFlight.getVersion() + 1;
             PaymentId paymentID = new PaymentId(inFlight.getPaymentIdentifier(), newVersion);
@@ -40,7 +39,7 @@ public class QualifyDebtorExecutor extends BaseExecutor
             debitEnrichmentModel.setCreatedTime(Instant.now());
             context.getDebitEnrichmentRepos().save(debitEnrichmentModel);
 
-            saveAuditEntries("DebitEnrichment", inFlight.getPaymentIdentifier(),serviceFeed.getAuditEntries());
+            saveAuditEntries("DebitEnrichment", inFlight.getPaymentIdentifier(),stpServiceCommand.getAuditEntries());
 
             return transaction;
 

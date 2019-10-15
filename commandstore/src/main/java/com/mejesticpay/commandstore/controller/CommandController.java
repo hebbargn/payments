@@ -6,6 +6,9 @@ import com.mejesticpay.commandstore.executor.*;
 import com.mejesticpay.commandstore.model.PaymentTransactionModel;
 import com.mejesticpay.commandstore.model.repos.*;
 
+import com.mejesticpay.paymentbase.InFlightTransactionInfo;
+import com.mejesticpay.paymentbase.Payment;
+import com.mejesticpay.paymentfactory.PaymentImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,29 +51,56 @@ public class CommandController
 
     @Transactional
     @PostMapping("/createpayment")
-    public PaymentTransactionModel createPayment(@RequestBody CreatePaymentCommand createPaymentCommand)
+    public Payment createPayment(@RequestBody CreatePaymentCommand createPaymentCommand)
     {
-        return (PaymentTransactionModel)new CreatePaymentExecutor(commandStoreContext).execute(createPaymentCommand);
+        PaymentTransactionModel transactionModel = (PaymentTransactionModel)new CreatePaymentExecutor(commandStoreContext).execute(createPaymentCommand);
+
+        PaymentImpl payment = new PaymentImpl(createPaymentCommand.getGenesis());
+        payment.setPaymentIdentifier(transactionModel.getPaymentId().getPaymentRef());
+        payment.setVersion(transactionModel.getPaymentId().getVersion());
+        payment.setState(transactionModel.getState());
+        payment.setSource(createPaymentCommand.getSource());
+        payment.setBranch(transactionModel.getBranch());
+        payment.setTrack(transactionModel.getTrack());
+        payment.setStation(transactionModel.getStation());
+        payment.setStatus(transactionModel.getStatus());
+
+        return payment;
     }
 
     @Transactional
     @PostMapping("/stpupdate")
-    public PaymentTransactionModel updateSTPCommands(@RequestBody STPServiceCommand stpServiceCommand)
+    public InFlightTransactionInfo updateSTPCommands(@RequestBody STPServiceCommand stpServiceCommand)
     {
+        PaymentTransactionModel transactionModel;
         switch(stpServiceCommand.getServiceType())
         {
             case FraudCheckInfo:
-                return (PaymentTransactionModel)new FraudCheckExecutor(commandStoreContext).execute(stpServiceCommand);
+                transactionModel =  (PaymentTransactionModel)new FraudCheckExecutor(commandStoreContext).execute(stpServiceCommand);
+                break;
             case DebitEnrichment:
-                return (PaymentTransactionModel)new QualifyDebtorExecutor(commandStoreContext).execute(stpServiceCommand);
+                transactionModel =  (PaymentTransactionModel)new QualifyDebtorExecutor(commandStoreContext).execute(stpServiceCommand);
+                break;
             case CompletePayment:
-                return (PaymentTransactionModel) new CompletePaymentExecutor(commandStoreContext).execute(stpServiceCommand);
+                transactionModel =  (PaymentTransactionModel) new CompletePaymentExecutor(commandStoreContext).execute(stpServiceCommand);
+                break;
             case CreditEnrichment:
-                return (PaymentTransactionModel) new QualifyCreditorExecutor(commandStoreContext).execute(stpServiceCommand);
+                transactionModel =  (PaymentTransactionModel) new QualifyCreditorExecutor(commandStoreContext).execute(stpServiceCommand);
+                break;
 
             default:
                 return null;
         }
+        InFlightTransactionInfo inFlightTransactionInfo = new InFlightTransactionInfo();
+        inFlightTransactionInfo.setBranch(transactionModel.getBranch());
+        inFlightTransactionInfo.setCurrentStation(transactionModel.getStation());
+        inFlightTransactionInfo.setPaymentIdentifier(transactionModel.getPaymentId().getPaymentRef());
+        inFlightTransactionInfo.setState(transactionModel.getState());
+        inFlightTransactionInfo.setStatus(transactionModel.getStatus());
+        inFlightTransactionInfo.setTrack(transactionModel.getTrack());
+        inFlightTransactionInfo.setVersion(transactionModel.getPaymentId().getVersion());
+
+        return inFlightTransactionInfo;
 
     }
 }

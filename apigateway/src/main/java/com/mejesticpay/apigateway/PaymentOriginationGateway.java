@@ -1,12 +1,14 @@
 package com.mejesticpay.apigateway;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mejesticpay.commands.CreatePaymentCommand;
 import com.mejesticpay.paymentbase.Genesis;
 import com.mejesticpay.paymentbase.InFlightTransactionInfo;
 import com.mejesticpay.paymentbase.Payment;
 import com.mejesticpay.paymentbase.ServiceFeed;
 import com.mejesticpay.paymentfactory.PaymentImpl;
 import com.mejesticpay.service.RoutePayment;
+import com.mejesticpay.stp.STPInboundData;
 import com.mejesticpay.util.JSONHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,16 +30,20 @@ public class PaymentOriginationGateway
     @PostMapping("/PaymentGateway")
     public Payment processPayment(@RequestBody Genesis origination)
     {
+        CreatePaymentCommand command = new CreatePaymentCommand();
+        command.setGenesis(origination);
+        command.setBranch("US");
+        command.setSubSource("East");
+        HttpEntity<CreatePaymentCommand> request = new HttpEntity(command);
 
-        HttpEntity<Payment> request = new HttpEntity(origination);
-        Payment payment = restTemplate.postForObject("http://localhost:8080/payments", request, PaymentImpl.class);
+        Payment payment = restTemplate.postForObject("http://localhost:8096/commands/createpayment", request, PaymentImpl.class);
 
-        ServiceFeed feed = new ServiceFeed(new InFlightTransactionInfo(payment,"New"), new RoutePayment());
-        feed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
+        STPInboundData inbound = new STPInboundData(payment, new RoutePayment(), "New");
+        inbound.setResult(STPInboundData.PROCESSING_RESULT.SUCCESS);
 
         try
         {
-            kafkaTemplate.send("PaymentRouter", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(feed));
+            kafkaTemplate.send("SendToSTPEngine", payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(inbound));
         }catch(JsonProcessingException joe)
         {
             joe.printStackTrace();

@@ -1,5 +1,6 @@
 package com.mejesticpay.paymentfactory;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mejesticpay.paymentbase.Payment;
 import com.mejesticpay.paymentbase.Genesis;
 import com.mejesticpay.paymentbase.AuditEntry;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +57,8 @@ public class PaymentImpl extends TransactionImpl implements Payment
     private AccountingInfo accountingInfo;
 
     private FraudCheckInfo fraudCheckInfo;
+
+    private String signature;
 
     public PaymentImpl(Genesis genesis)
     {

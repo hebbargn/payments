@@ -9,6 +9,7 @@ drop table commandstore.debit_enrich;
 drop table commandstore.payment_origination;
 
 
+
 create table commandstore.payment_events (
  payment_ref varchar(255) not null
 ,version int not null

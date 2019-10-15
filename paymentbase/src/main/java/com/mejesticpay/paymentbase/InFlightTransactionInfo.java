@@ -25,5 +25,8 @@ public class InFlightTransactionInfo
         this.state = payment.getState();
         this.requestedState = payment.getState();
         this.currentStation = currentStation;
+        this.branch = payment.getBranch();
+        this.status = payment.getStatus();
+        this.track = payment.getTrack();
     }
 }

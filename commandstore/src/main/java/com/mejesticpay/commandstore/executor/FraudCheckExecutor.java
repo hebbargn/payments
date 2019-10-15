@@ -21,15 +21,14 @@ public class FraudCheckExecutor  extends BaseExecutor {
         try
         {
             STPServiceCommand stpServiceCommand = (STPServiceCommand) command;
-            ServiceFeed serviceFeed = stpServiceCommand.getServiceFeed();
-            InFlightTransactionInfo inFlight = serviceFeed.getInFlightTransactionInfo();
+            InFlightTransactionInfo inFlight = stpServiceCommand.getTransactionInfo();
 
             int newVersion = inFlight.getVersion() + 1;
             PaymentId paymentID = new PaymentId(inFlight.getPaymentIdentifier(), newVersion);
 
             PaymentTransactionModel transaction = updateTransaction(paymentID, inFlight);
 
-            FraudCheckInfo fraudCheckInfo = (FraudCheckInfo)serviceFeed.getServiceData();
+            FraudCheckInfo fraudCheckInfo = (FraudCheckInfo)stpServiceCommand.getServiceData();
 
             FraudCheckModel fraudCheckModel = new FraudCheckModel();
             fraudCheckModel.setPaymentId(paymentID);
@@ -39,7 +38,7 @@ public class FraudCheckExecutor  extends BaseExecutor {
             fraudCheckModel.setCreatedTime(Instant.now());
             context.getFraudCheckRepos().save(fraudCheckModel);
 
-            saveAuditEntries("FraudCheck", inFlight.getPaymentIdentifier(), serviceFeed.getAuditEntries());
+            saveAuditEntries("FraudCheck", inFlight.getPaymentIdentifier(), stpServiceCommand.getAuditEntries());
 
             return transaction;
 

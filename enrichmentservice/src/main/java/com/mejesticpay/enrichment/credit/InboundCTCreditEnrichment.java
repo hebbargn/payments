@@ -6,6 +6,7 @@ import com.mejesticpay.enrichment.util.PartyLookupResponse;
 import com.mejesticpay.paymentbase.*;
 import com.mejesticpay.paymentfactory.PaymentImpl;
 import com.mejesticpay.service.CreditEnrichment;
+import com.mejesticpay.stp.STPInboundData;
 import com.mejesticpay.util.JSONHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class InboundCTCreditEnrichment
             logger.info(String.format("Topic - %s, Partition - %d, Value = %s", serviceName, record.partition(), record.value()));
 
             Payment payment = JSONHelper.convertToObjectFromJson(record.value(), PaymentImpl.class);
-            ServiceFeed serviceFeed = new ServiceFeed(new InFlightTransactionInfo(payment,serviceName));
+            STPInboundData stpInboundData = new STPInboundData(payment,serviceName);
 
             CreditEnrichment creditEnrich = new CreditEnrichment();
             PartyLookupRequest request = new PartyLookupRequest(PartyLookupRequest.LookupType.CIF);
@@ -60,24 +61,24 @@ public class InboundCTCreditEnrichment
                 creditEnrich.setCreditor(creditParty);
                 creditEnrich.setSettlementDate(LocalDate.now());
                 creditEnrich.setClearingDate(LocalDate.now());
-                serviceFeed.setServiceData(creditEnrich);
+                stpInboundData.setServiceData(creditEnrich);
 
                 String auditMessage = "Successfully enriched debit party from CIF.";
                 String detailsJSON = JSONHelper.convertToStringFromObject(result);
                 AuditEntry auditEntry = new AuditEntry(serviceName,auditMessage,detailsJSON);
-                serviceFeed.addAuditEntry(auditEntry);
+                stpInboundData.addAuditEntry(auditEntry);
 
-                serviceFeed.setResult(ServiceFeed.PROCESSING_RESULT.SUCCESS);
+                stpInboundData.setResult(STPInboundData.PROCESSING_RESULT.SUCCESS);
             }
             else
             {
                 AuditEntry auditEntry = new AuditEntry(serviceName,"Failed to enrich from CIF",null);
-                serviceFeed.addAuditEntry(auditEntry);
-                serviceFeed.setResult(ServiceFeed.PROCESSING_RESULT.FAILURE);
+                stpInboundData.addAuditEntry(auditEntry);
+                stpInboundData.setResult(STPInboundData.PROCESSING_RESULT.FAILURE);
             }
 
-            kafkaTemplate.send(SendPaymentToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(serviceFeed));
-            logger.info(JSONHelper.convertToPrettyStringFromObject(serviceFeed));
+            kafkaTemplate.send(SendPaymentToSTPEngine, payment.getPaymentIdentifier(), JSONHelper.convertToStringFromObject(stpInboundData));
+            logger.info(JSONHelper.convertToPrettyStringFromObject(stpInboundData));
             logger.info("Successfully processed inbound CT enrichment");
 
         } catch (Exception e)
