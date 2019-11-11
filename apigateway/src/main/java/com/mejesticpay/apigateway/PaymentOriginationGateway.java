@@ -34,6 +34,8 @@ public class PaymentOriginationGateway
         command.setGenesis(origination);
         command.setBranch("US");
         command.setSubSource("East");
+        command.setSource("ISO");
+
         HttpEntity<CreatePaymentCommand> request = new HttpEntity(command);
 
         Payment payment = restTemplate.postForObject("http://localhost:8096/commands/createpayment", request, PaymentImpl.class);

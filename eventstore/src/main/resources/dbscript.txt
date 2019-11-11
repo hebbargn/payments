@@ -1,0 +1,34 @@
+create database eventstore;
+create user 'paymenttest' identified by 'secret';
+grant all on eventstore.* to paymenttest;
+
+drop table eventstore.payment;
+drop table eventstore.audit_entries;
+
+create table eventstore.payment ( payment_ref varchar(255) not null
+,branch varchar(255) not null
+,source varchar(255) not null
+,station varchar(255) not null
+,state varchar(255) not null
+,status varchar(255) not null
+,track varchar(255) not null
+,version integer not null
+,json_genesis varchar(2000)
+,json_debit_enrich varchar(2000)
+,json_credit_enrich varchar(2000)
+,json_fraud_check varchar(2000)
+,created_by varchar(255)
+,created_time timestamp
+,last_updated_by varchar(255)
+,last_updated_time timestamp
+,PRIMARY KEY (payment_ref)
+ );
+
+create table eventstore.audit_entries(
+paymentid varchar(255) not null,
+service_name varchar(255),
+message varchar(255),
+instant timestamp,
+json_data varchar(1024),
+processed boolean
+);

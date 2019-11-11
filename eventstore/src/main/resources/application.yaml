@@ -1,0 +1,29 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer:
+              group-id: enrichmentservice
+              auto-offset-reset: earliest
+              enable-auto-commit: false
+    listener:
+      ack-mode: MANUAL
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/eventstore?serverTimezone=America/New_York
+    username: paymenttest
+    password: secret
+
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    com.mejesticpay: DEBUG
+
+CreatePaymentEvent: CreatePaymentEvent

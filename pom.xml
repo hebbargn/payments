@@ -19,6 +19,7 @@
     <modules>
         <module>configurationserver</module>
         <module>paymentbase</module>
+        <module>commandstore</module>
         <module>paymentrouter</module>
         <module>iso20022</module>
         <module>paymentstore</module>
@@ -27,6 +28,7 @@
         <module>enrichmentservice</module>
         <module>fraudcheck</module>
         <module>completepayment</module>
+        <module>eventstore</module>
     </modules>
 
     <dependencies>
