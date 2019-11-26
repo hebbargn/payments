@@ -1,0 +1,35 @@
+[
+  {
+    "name":"OutboundPayment",
+    "stations": {
+      "New": {
+        "name": "New",
+        "onSuccess": "InboundCTDebitEnrichment",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "InboundCTDebitEnrichment": {
+        "name": "InboundCTDebitEnrichment",
+        "onSuccess": "InboundCTCreditEnrichment",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "InboundCTCreditEnrichment": {
+        "name": "InboundCTCreditEnrichment",
+        "onSuccess": "FraudCheckService",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+
+      "FraudCheckService": {
+        "name": "FraudCheckService",
+        "onSuccess": "Complete",
+        "onHold": " Approval",
+        "onFailure": "Cancel"
+      },
+      "Complete": {
+        "name":"Complete"
+      }
+    }
+  }
+]

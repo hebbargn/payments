@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+
+PaymentStoreURL: http://localhost:8095/payments/
+CommandStoreURL: http://localhost:8096/commands/stpupdate
